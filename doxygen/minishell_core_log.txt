@@ -1,0 +1,26 @@
+
+/*! \page minishellbug minishell_core history
+This page is for advanced users.
+Make sure you have first read \ref intro "todo".
+
+* @section bug
+	- todo more bug
+	- 003-2015-06-08: add sh_short_ex
+	- 003-2015-05-22: add sh_enter 添加返回值，0表示quit正常退出，-1表示redline没有没有输入输出文件异常退出，解决后台运行readline直接退出问题
+	- 002-2015-04-27: fix 修订minishell在CMD_ARRAY下命令找不到时候溢出漏洞
+	- 001-2015-04-15: add 添加半命令
+	- 001-2014-12-08: add 1.采用uboot的定义命令方式\nadd 2.添加命令排序
+	- 001-2014-11-11: add 基础接口do_help、sh_init、sh_analyse、sh_enter
+
+* @section notes Version History
+- V1.0.0_TODO
+	-# 完成TCP框架搭建
+- V1.0.0Bate_20150121
+	-# 完成epoll server TCP客户端状态管理，1000个客户端连接10字节以内小数据量心跳数据异常
+	-# 未添加调试线程，待一段时间测试证明该客户端状态管理的确无漏洞后才加上调试线程，避免故障位置不好定位（究竟是客户端状态管理本身就没做好，还是调试线程带来的新问题）
+	-# 解决数百个客户端同时断开后内存越界问题
+	-# 解决minishell内存越界问题
+	-# 采用libreadline5.0+实现minishell命令历史记录，后期加上命令补全和命令提示功能
+	-# bug服务器与客户端连接，服务器端主动断开存在TIMEOUT计时，证明没有友好的完成4次退出握手，客户端主动退出可以正常释放SOCKET占用情况。以前是没有这个问题的，“解决数百个客户端同时断开”bug而付出的代价，以后会改进
+
+*/

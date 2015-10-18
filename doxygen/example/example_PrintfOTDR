@@ -1,0 +1,73 @@
+/*!  
+\example example_PrintfOTDR
+*/
+void funPrintOTDR()
+{
+	
+	char *pdata;// 从环形缓存里读取的数据
+	struct tms_retotdr_test_hdr   *ptest_hdr;
+	struct tms_retotdr_test_param *ptest_param;
+	struct tms_retotdr_data_hdr   *pdata_hdr;
+	struct tms_retotdr_data_val   *pdata_val;
+	struct tms_retotdr_event_hdr  *pevent_hdr;
+	struct tms_retotdr_event_val  *pevent_val;
+	struct tms_retotdr_chain      *pchain;
+
+	// todo 从环形缓存读取数据
+	pdata = readxxxx()
+
+	// 得到各数据段
+	TMS_PTR_OTDRTest(pdata, ptest_hdr, ptest_param, pdata_hdr, pdata_val, pevent_hdr, pevent_val, pchain);
+
+
+	register uint32_t *p32s,*p32d;
+	register uint16_t *p16s,*p16d;
+	register int loop;
+
+
+	// 保存otdr数据
+	loop = pdata_hdr->count;
+	p16d = (uint16_t*)pdata_val;
+	p16s = (uint16_t*)pdata_val;
+	
+	FILE *fp;
+	fp = fopen("otdr.txt","w");
+	for (register int i = 0;i < loop; i++) {
+		*p16d = htons(*p16s);
+		fprintf(fp,"%d\n",*p16d);
+		p16d++;
+		p16s++;
+	}
+	fclose(fp);
+
+
+
+
+	// 打印事件列表
+	printf("\n------------------------------------------------------------------------\n");
+	printf("%s\t%s\t%8.12s\t%8.12s\t%8.12s\t%8.12s\n",
+		"dist","type","att","lost","ref","link");
+	printf("------------------------------------------------------------------------\n");
+	p32d = (uint32_t*)pevent_val;
+
+
+	
+	
+	struct tms_retotdr_event_val  *ptevent_val;
+	ptevent_val = pevent_val;
+	for (register int i = 0;i < pevent_hdr->count; i++) {
+		printf("%d\t%d\t%8.2f\t%8.2f\t%8.2f\t%8.2f\n",
+		ptevent_val->distance,
+		ptevent_val->event_type,
+		ptevent_val->att,
+		ptevent_val->loss,
+		ptevent_val->reflect,
+		ptevent_val->link_loss);
+
+		ptevent_val++;
+	}
+	printf("------------------------------------------------------------------------\n");
+	printf("                                  Event count %d ID %s\n",pevent_hdr->count, pevent_hdr->eventid);
+
+
+}

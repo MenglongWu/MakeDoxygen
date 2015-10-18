@@ -1,0 +1,12 @@
+
+/*! \page gl glink bug
+This page is for advanced users. glink
+Make sure you have first read \ref intro "fffffthe introduction".
+
+* @section bug
+	- todo more bug
+	- 002-2015-05-16：修订：glink添加struct glink_addr用于描述glink帧的地址，glink_Build不再负责填充“缺省的本地和远端地址”，
+	仅将输入参数的struct glink_base  *pbase_hdr地址从主机字节序转换成网路网络字节序
+	- 001-2015-05-15: 发送不完全导致网络断开，glink_SendSerial调用send返回-1时应该检测错误码是否是EAGAIN，
+	然后再次send，当初直接return -1，以为send返回0才是缺省EAGAIN
+*/
