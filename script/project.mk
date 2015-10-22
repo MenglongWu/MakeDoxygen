@@ -1,5 +1,5 @@
 
-PRJ_NAME = "Hello-KuGo Menglong"
+PRJ_NAME = "[Project-Name]"
 PRJ_VERSION = "1.0.0"
 
 # CROSS_COMPILE = 

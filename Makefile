@@ -33,17 +33,17 @@ else
 endif
 #################################################################
 # load default project configure: script/project.mk
-ifeq ("$(project)", "")
+ifeq ("$(file_prj)", "")
 	ifeq ($(TOP_DIR)/script/project.mk, $(wildcard $(TOP_DIR)/script/project.mk))
-		project = $(TOP_DIR)/script/project.mk
+		file_prj = $(TOP_DIR)/script/project.mk
 		include $(TOP_DIR)/script/project.mk
 	else
 		project = ========== no such file ./script/project.mk 
 	endif
 else
-	include $(project)
+	include $(file_prj)
 endif
-# include $(project)
+# include $(file_prj)
 
 #################################################################
 # CROSS_COMPILE		- While the cross tool link
@@ -79,11 +79,11 @@ endif
 # select which file be complie,it edit in config_app_file.mk
 # Import all files,it edit in config_xxx_file_list.mk
 ifeq ("$(file_config)", "")
-	ifeq ($(TOP_DIR)/script/config.mk, $(wildcard $(TOP_DIR)/script/config.mk))
-		file_config = $(TOP_DIR)/script/config.mk
+	ifeq ($(TOP_DIR)/script/.config, $(wildcard $(TOP_DIR)/script/.config))
+		file_config = ./script/.config
 		include $(file_config)
 	else
-		file_config = ========== no such file ./script/config.mk 
+		file_config = ========== no such file ./script/.config
 	endif
 else
 	include $(file_config)
@@ -149,7 +149,7 @@ MAKE_DIR	+= include
 
 #################################################################
 # macro NOWTIME "yyyy-mm-dd_HH:MM:SS"
-NOWTIME="$(shell date "+%Y-%m-%d %H:%M:%S")"
+NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 
 #################################################################
 # INCLUDE_DIR	- Where will be search *.h file
@@ -162,6 +162,7 @@ INCLUDE_DIR	+=
 LFLAGS		+= 
 LIB_DIR 	+= 
 CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"  -DPRJ_VERSION=\"$(PRJ_VERSION)\" -DPRJ_NAME=\"$(PRJ_NAME)\"
+
 
 #################################################################
 
@@ -207,7 +208,7 @@ LIST_PRJ = all clean
 all:$(load_lds)
 	
 configure: init_dir
-	@mheader config.mk include/autoconfig.h $(PRJ_NAME)
+	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 lp:$(LIST_PRJ)
 	echo $(LIST_PRJ)
 
@@ -215,24 +216,24 @@ lp:$(LIST_PRJ)
 # it's a ELF application program file on linux,*.lds is auto loaded 
 # by system from default path
 load_lds-n:$(OUTPUT_DIR) $(OBJS)
-	@echo "    " create $(OUTPUT_DIR)/$(OUTPUT_ELF)
+	@echo "     [$(ARCH)]" create $(OUTPUT_DIR)/$(OUTPUT_ELF)
 	@$(CC) -o $(OUTPUT_DIR)/$(OUTPUT_ELF) $(OBJS) $(LIB_DIR) $(LFLAGS)
 
-	@echo "    " create $(OUTPUT_DIR)/$(OUTPUT_DIS)
+	@echo "     [$(ARCH)]" create $(OUTPUT_DIR)/$(OUTPUT_DIS)
 	@$(OBJDUMP) -S $(OUTPUT_DIR)/$(OUTPUT_ELF) > $(OUTPUT_DIR)/$(OUTPUT_DIS)
 
 # it's a bootloader bin file,user have to select *.lds file by your self
 # default file_lds = boot.lds
 load_lds-y:$(OUTPUT_DIR) $(OBJS)
 
-	@echo "    " create $(OUTPUT_DIR)/$(OUTPUT_ELF)
+	@echo "     [$(ARCH)]" create $(OUTPUT_DIR)/$(OUTPUT_ELF)
 	@$(LD) -T$(file_lds) $(OBJS) -o $(OUTPUT_DIR)/$(OUTPUT_ELF) $(LFLAGS) $(LIB_DIR)  
 	
-	@echo "    " create $(OUTPUT_DIR)/$(OUTPUT_BIN)
+	@echo "     [$(ARCH)]" create $(OUTPUT_DIR)/$(OUTPUT_BIN)
 	@$(OBJCOPY) -O binary -S $(OUTPUT_DIR)/$(OUTPUT_ELF) $(OUTPUT_DIR)/$(OUTPUT_BIN)
 
 
-	@echo "    " create $(OUTPUT_DIR)/$(OUTPUT_DIS)
+	@echo "     [$(ARCH)]" create $(OUTPUT_DIR)/$(OUTPUT_DIS)
 	@$(OBJDUMP) -S $(OUTPUT_DIR)/$(OUTPUT_ELF) > $(OUTPUT_DIR)/$(OUTPUT_DIS)
 #################################################################
 library:$(OBJS)
@@ -240,13 +241,13 @@ library:$(OBJS)
 
 #################################################################
 %.o:%.c
-	@echo "    " compile $^
+	@echo "     [$(ARCH)]" compile $^
 	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR)
 %.o:%.cpp
-	@echo "    " compile $^
+	@echo "     [$(ARCH)]" compile $^
 	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) 
 %.o:%.S
-	@echo "    " compile $^
+	@echo "     [$(ARCH)]" compile $^
 	@$(CC) -o $@ -c $^ $(CS_FLAGS) $(INCLUDE_DIR)
 
 
@@ -262,7 +263,7 @@ $(MAKE_DIR):
 
 .PHONY: clean disclean
 clean:
-	@-rm $(OBJS)  \
+	@-rm -f $(OBJS)  \
 		$(OUTPUT_DIR)/$(OUTPUT_DIS) \
 		$(OUTPUT_DIR)/$(OUTPUT_ELF) \
 		$(OUTPUT_DIR)/$(OUTPUT_BIN) \
@@ -286,7 +287,7 @@ print_env:
 
 	@echo 
 	@echo file_common "  "= $(file_common)
-	@echo project "      "= $(project)
+	@echo file_prj "     "= $(file_prj)
 	@echo file_config "  "= $(file_config)
 	@echo file_list "    "= $(file_list)
 	@echo file_lds "     "= $(file_lds)
