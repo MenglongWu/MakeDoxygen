@@ -1,0 +1,1 @@
+SRCS-y += src/smain.c
