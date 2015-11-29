@@ -13,3 +13,4 @@ int main()
 	printf("sin(pi/2) = %f\n", sin(M_PI/2));
 	return 0;
 }
+

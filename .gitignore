@@ -4,3 +4,6 @@
 .tags_sorted_by_file
 .tags
 *.bak
+release
+release-x86
+release-arm920t

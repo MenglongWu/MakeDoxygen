@@ -1,3 +1,7 @@
+#################################################################
+# config your default value
+# ARCH=xxxx
+
 
 ifeq ("$(ARCH)", "")
 	ARCH=x86
@@ -24,20 +28,22 @@ endif
 #-Wl,-rpath=./:./lib/
 
 #when app.elf run will select *.so/a from $(PATH) -> ./ -> ./lib/
-INCLUDE_DIR	= -I./ 
-LFLAGS		= 
-LIB_DIR 	= 
+INCLUDE_DIR = -I./ -I./include
+LFLAGS	    =
+LIB_DIR     = 
 CFLAGS      = 
+CS_FLAGS    = 
+
 ifeq ("$(ARCH)", "x86")
 	INCLUDE_DIR	+= 
-	LFLAGS		+= 
+	LFLAGS		+= -Wl,-rpath=./:lib-x86/
 	LIB_DIR 	+= -L/usr/local/install/lib
 	CFLAGS		+= -DTARGET_X86
 endif
 
 ifeq ("$(ARCH)", "armv7")
 	INCLUDE_DIR	+= -I/usr/4412/install/include
-	LFLAGS		+= 
+	LFLAGS		+= -Wl,-rpath=./:./lib-armv7/
 	LIB_DIR 	+= -L/usr/4412/install/lib
 	CFLAGS		+= -DTARGET_ARMV7
 endif
@@ -45,7 +51,7 @@ endif
 
 ifeq ("$(ARCH)", "arm920t")
 	INCLUDE_DIR	+= -I/usr/arm920t/install/include
-	LFLAGS		+= 
+	LFLAGS		+= -Wl,-rpath=./:./lib-arm920t/
 	LIB_DIR 	+= -L/usr/arm920t/install/lib
 	CFLAGS		+= -DTARGET_ARM920T
 endif
@@ -53,9 +59,9 @@ endif
 
 ifeq ("$(ARCH)", "i586")
 	INCLUDE_DIR	+= -I/usr/win32/install/include
-	LFLAGS		+= 
+	LFLAGS		+= -Wl,-rpath=./:./lib-win32/
 	LIB_DIR 	+= -L/usr/win32/install/lib
-	CFLAGS		+= 
+	CFLAGS		+= -DTARGET_WIN32
 endif
 #################################################################
 
