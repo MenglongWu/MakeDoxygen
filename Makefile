@@ -277,7 +277,7 @@ clean:
 
 .PHONY: disclean
 disclean:clean
-	@-rm $(OUTPUT_DIR)-$(ARCH) -rf
+	@rmdir $(OUTPUT_DIR)-$(ARCH) -p
 #################################################################
 
 
