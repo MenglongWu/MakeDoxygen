@@ -14,71 +14,28 @@
 # V0.1		2014-08-23
 #		2 demo makefile AppMakefile.mk and LibMakefile.mk
 # V0.2		2015-08-21
-#	- load file_list
-#	- load output
 
-
+# V1.0
+# - 2015-12-01,Menglong Wu,MenglongWoo@aliyun.com
+#	- script/listprj.mk
+#	- script/default/project.mk
+#	- script/default/listprj.mk
 
 export TOP_DIR = $(realpath ./)
 
-include script/listprj.mk
+#################################################################
+# load common config
 ifeq ("$(file_common)", "")
 	ifeq ($(TOP_DIR)/script/common.mk, $(wildcard $(TOP_DIR)/script/common.mk))
 		file_common = $(TOP_DIR)/script/common.mk
 		include $(TOP_DIR)/script/common.mk
 	else
-		file_common = ========== no such file ./script/common.mk 
+		file_common = 
 	endif
 else
 	include $(common)
 endif
-#################################################################
-# load default project configure: script/project.mk
-ifeq ("$(file_prj)", "")
-	ifeq ($(TOP_DIR)/script/project.mk, $(wildcard $(TOP_DIR)/script/project.mk))
-		file_prj = $(TOP_DIR)/script/project.mk
-		include $(TOP_DIR)/script/project.mk
-	else
-		project = ========== no such file ./script/project.mk 
-	endif
-else
-	include $(file_prj)
-endif
-# include $(file_prj)
 
-#################################################################
-# CROSS_COMPILE		- While the cross tool link
-# ARCH				- Target platform
-# ARCH=x86
-# DEV=MCU
-# ifeq ("$(ARCH)", "")
-# 	ARCH=x86
-# endif
-
-# ifeq ("$(ARCH)", "arm920t")
-# 	CROSS_COMPILE	=/opt/EmbedSky/crosstools_3.4.5_softfloat/gcc-3.4.5-glibc-2.3.6/arm-linux/bin/arm-linux-
-# endif
-
-# ifeq ("$(ARCH)", "armv7")
-# 	CROSS_COMPILE	=/opt/iTop-4412/4.3.2/bin/arm-linux-
-# endif
-
-# ifeq ("$(ARCH)", "i586")
-# 	CROSS_COMPILE	=i586-mingw32msvc-
-# endif
-
-# ifeq ("$(DEV)", "")
-# 	DEV=MCU
-# endif
-
-# ifeq ("$(DEV)", "M")
-# 	CFLAGS =-D_MANAGE
-# endif
-
-
-#################################################################
-# select which file be complie,it edit in config_app_file.mk
-# Import all files,it edit in config_xxx_file_list.mk
 ifeq ("$(file_config)", "")
 	ifeq ($(TOP_DIR)/script/config.mk, $(wildcard $(TOP_DIR)/script/config.mk))
 		file_config = ./script/config.mk
@@ -91,17 +48,53 @@ else
 endif
 
 
+#################################################################
+# load all project items
+# DP,ARG defined in listprj.mk
+include script/listprj.mk
 
-ifeq ("$(file_list)", "")
-	ifeq ($(TOP_DIR)/script/default/filelist.mk, $(wildcard $(TOP_DIR)/script/default/filelist.mk))
-		file_list = $(TOP_DIR)/script/default/filelist.mk
-		include $(file_list)
-	else
-		file_list = ========== no such file ./script/default/filelist.mk 
-	endif
+ifeq ("$($(DP)_arg)", "")
+	ARG=all
 else
-	include $(file_list)
+	ARG=$($(DP)_arg)
 endif
+
+#################################################################
+# load default project configure xxx/project.mk
+# load file list xxx/filelist.mk,SRCS-y defined in xxx/filelist.mk
+file_list =$($(DP))/filelist.mk
+file_prj  =$($(DP))/project.mk
+
+# checking
+ifeq ($(file_prj), $(wildcard $(file_prj)))
+	include $(file_prj)
+else
+$(warning  "file_prj undefined")
+	file_prj = 
+endif
+
+# checking
+ifeq ($(file_list), $(wildcard $(file_list)))
+	include $(file_list)
+else
+$(warning  "file_list undefined")
+	 file_list = 
+endif
+
+
+# checking
+ifeq ("$(SRCS-y)", "")
+$(warning  "SRCS-y is empty")
+endif
+
+
+
+
+
+#################################################################
+# select which file be complie,it edit in config_app_file.mk
+# Import all files,it edit in config_xxx_file_list.mk
+
 
 ifeq ("$(file_lds)", "")
 	ifeq ($(TOP_DIR)/script/default/boot.lds, $(wildcard $(TOP_DIR)/script/default/boot.lds))
@@ -109,9 +102,7 @@ ifeq ("$(file_lds)", "")
 		# include $(file_lds)
 	else
 		file_lds = ========== no such file ./script/default/boot.lds 
-	endif
-else
-	include $(file_list)
+	endif	
 endif
 
 
@@ -162,7 +153,11 @@ NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 # INCLUDE_DIR += 
 # LFLAGS	    += 
 # LIB_DIR     += 
-CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"  -DPRJ_VERSION=\"$(PRJ_VERSION)\" -DPRJ_NAME=\"$(PRJ_NAME)\"
+CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
+		-DPRJ_VERSION=$(PRJ_VERSION)	\
+		-DPRJ_PATCHLEVEL=$(PRJ_PATCHLEVEL)	\
+		-DPRJ_SUBLEVEL=$(PRJ_SUBLEVEL)	\
+		-DPRJ_NAME=\"$(PRJ_NAME)\"
 
 
 #################################################################
@@ -195,17 +190,26 @@ else
 endif
 
 
+#################################################################
+# def target beyond DP,ARG
 def:$(ARG)
 
-all:echo-arch elf bin dis
-
-configure: init_dir
-	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
-	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
+# do something for all target
+include script/allprj.mk
 
 # list all project
 lp:
 	@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"
+
+#################################################################
+# 
+all:echo-arch elf bin dis
+
+#################################################################
+# create autoconfig.h and directory
+configure: init_dir
+	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
+	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 # 
 dis:echo-arch elf
@@ -293,7 +297,7 @@ gdb-core:
 
 print_env:
 	@echo =========================================================
-	echo $(VAR)
+
 	@echo PRJ_VERSION "  "= $(PRJ_VERSION)
 	@echo PRJ_NAME "     "= $(PRJ_NAME)
 
@@ -353,6 +357,15 @@ rmdb:
 sqlite3:
 	sqlite3 /etc/xx.db
 
+#################################################################
+# copy/install output file to other directory
+copy:copy_$(ARG)
 
-copy:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /mnt/nfs/$(OUTPUT_ELF)
+copy_elf:copy_all
+copy_all:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /usr/armdebug/
+copy_bin:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /usr/armdebug/
+copy_mlib:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /usr/armdebug
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /usr/armdebug

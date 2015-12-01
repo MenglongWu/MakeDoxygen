@@ -2,6 +2,66 @@
 It's a project templet, include **Makefile temple** and **Doxygen templet**.
 
 ##How to use/怎么使用
+
+
+1. **make disclean**
+
+```
+root@fnc:MakeDoxygen# make disclean 
+```
+1. **make configure**
+
+```
+root@fnc:MakeDoxygen# make configure 
+echo ./script/config.mk include/autoconfig.h "[default-project]"
+./script/config.mk include/autoconfig.h [default-project]
+read config file :./script/config.mk
+make header file :include/autoconfig.h
+```
+
+1. **make allp** make all project
+
+```
+root@fnc:MakeDoxygen# make allp
+make DP=pi2
+make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
+    ARCH       [x86]
+    create     lib-x86/libla.so
+    create     lib-x86/libla.a
+make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
+make DP=pi3
+make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
+    ARCH       [x86]
+    create     lib-x86/liblb.so
+    create     lib-x86/liblb.a
+make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
+make DP=pi1
+make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
+    ARCH       [x86]
+    compile    src/smain.c
+    create     release-x86/default.elf
+    create     release-x86/download.bin
+make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
+```
+
+1. **make run** run default project output target
+
+```
+root@fnc:MakeDoxygen# make run
+./release-x86/default.elf
+Macro:
+        PRJ_NAME      [default-project]
+        PRJ_VERSION    1
+        PRJ_PATCHLEVEL 0
+        PRJ_SUBLEVEL   0
+        BUILD_DATE    2015-12-01_16:19:25
+asin(1) = 1.570796
+test lafun1():  I'm fun1() from libla.so
+test lafun2():  I'm fun2() from libla.so
+test lbfun1():  I'm fun1() from liblb.so
+```
+
+##explain/解释
 * make configure
 
 默认执行 **mkheader ./script/.config include/autoconfig.h "[Project Name]"**

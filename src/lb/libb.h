@@ -7,6 +7,7 @@ extern "C" {
 
 void lbfun1();
 void lbfun2();
+void lbfun3();
 
 
 #ifdef __cplusplus
