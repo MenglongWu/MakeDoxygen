@@ -8,7 +8,7 @@ extern "C" {
 
 void lafun2()
 {
-	printf("%s", CONFIG_LB_FUN2_STR);
+	printf("%s", CONFIG_LA_FUN2_STR);
 }
 
 #ifdef CONFIG_USE_LA_PART2

@@ -1,6 +1,8 @@
 
-PRJ_NAME = "[Project-Name]"
-PRJ_VERSION = "1.0.0"
+PRJ_NAME = "[lib-a]"
+PRJ_VERSION    = 1
+PRJ_PATCHLEVEL = 0
+PRJ_SUBLEVEL   = 0
 
 
 

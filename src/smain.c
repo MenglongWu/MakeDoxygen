@@ -14,9 +14,15 @@ int main()
 {
 	printf("Macro:\n"
 		"\tPRJ_NAME      %s\n"
-		"\tPRJ_VERSION   %s\n"
+		"\tPRJ_VERSION    %d\n"
+		"\tPRJ_PATCHLEVEL %d\n"
+		"\tPRJ_SUBLEVEL   %d\n"
 		"\tBUILD_DATE    %s\n",
-		PRJ_NAME,PRJ_VERSION,BUILD_DATE);
+		PRJ_NAME,
+		PRJ_VERSION,
+		PRJ_PATCHLEVEL,
+		PRJ_SUBLEVEL,
+		BUILD_DATE);
 
 	printf("asin(1) = %f\n", asin(1));
 

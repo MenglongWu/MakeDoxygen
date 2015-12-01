@@ -14,6 +14,8 @@
 # V0.1		2014-08-23
 #		2 demo makefile AppMakefile.mk and LibMakefile.mk
 # V0.2		2015-08-21
+
+# V1.0
 # - 2015-12-01,Menglong Wu,MenglongWoo@aliyun.com
 #	- script/listprj.mk
 #	- script/default/project.mk
@@ -151,7 +153,11 @@ NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 # INCLUDE_DIR += 
 # LFLAGS	    += 
 # LIB_DIR     += 
-CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"  -DPRJ_VERSION=\"$(PRJ_VERSION)\" -DPRJ_NAME=\"$(PRJ_NAME)\"
+CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
+		-DPRJ_VERSION=$(PRJ_VERSION)	\
+		-DPRJ_PATCHLEVEL=$(PRJ_PATCHLEVEL)	\
+		-DPRJ_SUBLEVEL=$(PRJ_SUBLEVEL)	\
+		-DPRJ_NAME=\"$(PRJ_NAME)\"
 
 
 #################################################################

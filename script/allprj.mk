@@ -14,6 +14,7 @@ allclean:
 	$(MAKE) DP=pi2 clean
 	$(MAKE) DP=pi3 clean
 	$(MAKE) DP=pi1 clean
+
 # remote all output file and empty directory which create by Makefile
 .PHONY:alldisclean
 alldisclean:

@@ -1,6 +1,8 @@
 
-PRJ_NAME = "[default-project]"
-PRJ_VERSION = "1.0.0"
+PRJ_NAME       = "[default-project]"
+PRJ_VERSION    = 1
+PRJ_PATCHLEVEL = 0
+PRJ_SUBLEVEL   = 0
 
 
 # default download.elf,download.dis,download.bin
