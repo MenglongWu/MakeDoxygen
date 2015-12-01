@@ -13,7 +13,7 @@ OUTPUT_A	= liblb.a
 
 OUTPUT_DIR 	= lib
 
-file_list = $(TOP_DIR)/script/prj_libb/filelist.mk
+# file_list = $(TOP_DIR)/script/prj_libb/filelist.mk
 
 
 

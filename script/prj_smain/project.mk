@@ -13,7 +13,7 @@ OUTPUT_A	=
 
 OUTPUT_DIR = 
 
-file_list = $(TOP_DIR)/script/fl_smain.mk
+# file_list = $(TOP_DIR)/script/fl_smain.mk
 # 
 
 INCLUDE_DIR	+= 

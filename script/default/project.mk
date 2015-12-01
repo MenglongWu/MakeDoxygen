@@ -12,7 +12,7 @@ OUTPUT_SO 	=
 OUTPUT_A	= 
 OUTPUT_DIR 	= 
 
-file_list = $(TOP_DIR)/script/default/filelist.mk
+# file_list = $(TOP_DIR)/script/default/filelist.mk
 
 
 INCLUDE_DIR	+= 

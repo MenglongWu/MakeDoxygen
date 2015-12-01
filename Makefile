@@ -195,6 +195,7 @@ else
 endif
 
 
+def:$(ARG)
 
 all:echo-arch elf bin dis
 
@@ -204,7 +205,7 @@ configure: init_dir
 
 # list all project
 lp:
-	@cat script/listprj.mk | grep ".mk" | grep -v "#"
+	@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"
 
 # 
 dis:echo-arch elf
@@ -277,7 +278,7 @@ clean:
 
 .PHONY: disclean
 disclean:clean
-	@rmdir $(OUTPUT_DIR)-$(ARCH) -p
+	@rmdir $(OUTPUT_DIR)-$(ARCH) --ignore
 #################################################################
 
 
