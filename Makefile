@@ -34,6 +34,18 @@ else
 	include $(common)
 endif
 
+ifeq ("$(file_config)", "")
+	ifeq ($(TOP_DIR)/script/config.mk, $(wildcard $(TOP_DIR)/script/config.mk))
+		file_config = ./script/config.mk
+		include $(file_config)
+	else
+		file_config = ========== no such file ./script/config.mk
+	endif
+else
+	include $(file_config)
+endif
+
+
 #################################################################
 # load all project items
 # DP,ARG defined in listprj.mk
@@ -80,16 +92,6 @@ endif
 #################################################################
 # select which file be complie,it edit in config_app_file.mk
 # Import all files,it edit in config_xxx_file_list.mk
-ifeq ("$(file_config)", "")
-	ifeq ($(TOP_DIR)/script/config.mk, $(wildcard $(TOP_DIR)/script/config.mk))
-		file_config = ./script/config.mk
-		include $(file_config)
-	else
-		file_config = ========== no such file ./script/config.mk
-	endif
-else
-	include $(file_config)
-endif
 
 
 ifeq ("$(file_lds)", "")
@@ -182,21 +184,26 @@ else
 endif
 
 
-
+#################################################################
+# def target beyond DP,ARG
 def:$(ARG)
 
-
+# do something for all target
 include script/allprj.mk
-
-all:echo-arch elf bin dis
-
-configure: init_dir
-	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
-	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 # list all project
 lp:
 	@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"
+
+#################################################################
+# 
+all:echo-arch elf bin dis
+
+#################################################################
+# create autoconfig.h and directory
+configure: init_dir
+	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
+	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 # 
 dis:echo-arch elf
@@ -284,7 +291,6 @@ gdb-core:
 
 print_env:
 	@echo =========================================================
-	echo $(VAR) $(ARG)
 
 	@echo PRJ_VERSION "  "= $(PRJ_VERSION)
 	@echo PRJ_NAME "     "= $(PRJ_NAME)
@@ -345,6 +351,15 @@ rmdb:
 sqlite3:
 	sqlite3 /etc/xx.db
 
+#################################################################
+# copy/install output file to other directory
+copy:copy_$(ARG)
 
-copy:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /mnt/nfs/$(OUTPUT_ELF)
+copy_elf:copy_all
+copy_all:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /usr/armdebug/
+copy_bin:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /usr/armdebug/
+copy_mlib:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /usr/armdebug
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /usr/armdebug
