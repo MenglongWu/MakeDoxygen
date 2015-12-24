@@ -164,6 +164,7 @@ CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
 GCC_G++ = gcc
 CC 	= $(CROSS_COMPILE)$(GCC_G++)
 LD 	= $(CROSS_COMPILE)ld
+AR  = $(CROSS_COMPILE)ar
 OBJDUMP = $(CROSS_COMPILE)objdump
 OBJCOPY = $(CROSS_COMPILE)objcopy
 
@@ -171,7 +172,7 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 # CFLAGS		- Compile general option
 # CC_FLAGS		- Compile only for *.c file option
 # CS_FLAGS		- Compile only for *.S file option
-CFLAGS		+= -g  	 -Wall -static -rdynamic
+CFLAGS		+= -g  	 -Wall  -rdynamic
 ifeq ("$(GCC_G++)","gcc") # only compile gcc use -std=gnu99 option
 	CC_FLAGS    = -std=gnu99
 else
@@ -190,6 +191,13 @@ else
 endif
 
 
+# CK_ARCH=$(shell ./ck.sh)
+
+# check-arch:
+# 	@if [ "$(CK_ARCH)" = "unknow" ]; \
+# 	then \
+# 		echo "CK_ARCH unknow"; \
+# 	fi
 #################################################################
 # def target beyond DP,ARG
 def:$(ARG)
@@ -200,7 +208,9 @@ include script/allprj.mk
 # list all project
 lp:
 	@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"
-
+	@echo DP=$(DP)
+ep:
+	vi -o $(file_prj) $(file_list)
 #################################################################
 # 
 all:echo-arch elf bin dis
@@ -241,7 +251,7 @@ mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
 	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"
 	@$(CC) -shared -fPIC -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) $(OBJS)
 	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"
-	@ar rcs $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) $(OBJS)
+	@$(AR) rcs $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) $(OBJS)
 #################################################################
 echo-arch:
 	@echo "    ARCH       [$(ARCH)]"

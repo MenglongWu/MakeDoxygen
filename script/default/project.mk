@@ -17,5 +17,5 @@ OUTPUT_DIR 	=
 
 INCLUDE_DIR	+= 
 LFLAGS		+= -lla -llb
-LIB_DIR 	+= -L./lib-x86/ 
-CFLAGS      	+= 
+LIB_DIR 	+= 
+CFLAGS      += 
