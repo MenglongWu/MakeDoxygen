@@ -94,7 +94,7 @@ endif
 
 ifeq ("$(file_list)", "")
 	ifeq ($(TOP_DIR)/script/default/filelist.mk, $(wildcard $(TOP_DIR)/script/default/filelist.mk))
-		file_list = $(TOP_DIR)/script/default/filelist.mk
+		file_list = ./script/default/filelist.mk
 		include $(file_list)
 	else
 		file_list = ========== no such file ./script/default/filelist.mk 
@@ -198,14 +198,22 @@ endif
 
 all:echo-arch elf bin dis
 
+
 configure: init_dir
 	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
 	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 # list all project
 lp:
-	@cat script/listprj.mk | grep ".mk" | grep -v "#"
+#@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"
+	@cat script/listprj.mk | grep "=script/.\|arg=" | \
+		awk -F "=" "{print \$$2}" 
+		# xargs echo
 
+
+
+ep:
+	# vi $(file_prj) $(file_list)
 # 
 dis:echo-arch elf
 	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"
@@ -242,7 +250,7 @@ echo-arch:
 	@echo "    ARCH       [$(ARCH)]"
 %.o:%.c
 	@echo "    compile    $^"
-	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR)
+	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) >> /run/make/out.txt
 %.o:%.cpp
 	@echo "    compile    $^"
 	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) 

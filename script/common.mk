@@ -2,6 +2,12 @@
 # config your default value
 # ARCH=xxxx
 
+SUPPOR_ARCH = x86 arm920t armv7 i586
+# ifneq ($(ARCH) , $(filter $(SUPPOR_ARCH), $(ARCH)) )
+# # $(warning  "file_list undefinessssssssd")
+# 	$(error  file_list undefinessssssssd)
+# endif
+
 
 ifeq ("$(ARCH)", "")
 	ARCH=x86

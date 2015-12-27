@@ -1,7 +1,7 @@
-	pi1=script/default/project.mk
-	pi2=script/prj_liba/project.mk
-	pi3=script/prj_libb/project.mk
-	pi4=script/prj_smain/project.mk
+	pi1=script/default
+	pi2=script/prj_liba
+	pi3=script/prj_libb
+	pi4=script/prj_smain
 
 DP=pi1
-file_prj=$($(DP))
+file_prj=$($(DP))/project.mk
