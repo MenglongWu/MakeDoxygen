@@ -87,7 +87,7 @@ DP=pi1
 
 * **make ep DP=pixx**
 
-编辑某工程配置脚本
+编辑某工程目录下(script/xxx)两个配置脚本project.mk,filelist.mk
 
 ![image](doc/image/ep.png)
 
@@ -104,11 +104,12 @@ DP=pi1
 Makefile基本可以作为一个通用模板，无特殊需要无需做修改。  
 通常需要修改的脚本包括:
 
-* **script/common.mk**  
-* **script/config.mk** 
-* **script/listprj.mk** 
-* **script/xxx/project.mk**  
-* **script/xxx/filelist.mk**  
+
+* [**script/common.mk** ](./script/README.md)  
+* [**script/config.mk** ](./script/README.md)  
+* [**script/listprj.mk** ](./script/README.md)  
+* [**script/xxx/project.mk** ](./script/README.md)   
+* [**script/xxx/filelist.mk** ](./script/README.md)   
 
 
 
