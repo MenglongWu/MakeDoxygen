@@ -3,13 +3,18 @@ It's a project templet, include **Makefile temple** and **Doxygen templet**.
 
 ##How to use/怎么使用
 
+* **make allclean**  
 
-1. **make disclean**
+按照顺序清楚总工程下若干工程输出文件  
 
-```
-root@fnc:MakeDoxygen# make disclean 
-```
-1. **make configure**
+
+* **make alldisclean**
+
+按照顺序清楚总工程下若干工程输出文件，删除那些由Makefile自动生成，并且是空的目录
+
+* **make configure**
+
+读取script/config.mk（格式如linux内核.config）生成总工程配置文件include/autoconfig.h
 
 ```
 root@fnc:MakeDoxygen# make configure 
@@ -19,7 +24,9 @@ read config file :./script/config.mk
 make header file :include/autoconfig.h
 ```
 
-1. **make allp** make all project
+* **make allp** make all project
+
+“按照顺序”编译总工程下若干工程
 
 ```
 root@fnc:MakeDoxygen# make allp
@@ -44,7 +51,9 @@ make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
 make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
 ```
 
-1. **make run** run default project output target
+* **make run** run default project output target
+
+运行总工程下的默认输出文件，通常是*.elf
 
 ```
 root@fnc:MakeDoxygen# make run
@@ -60,6 +69,49 @@ test lafun1():  I'm fun1() from libla.so
 test lafun2():  I'm fun2() from libla.so
 test lbfun1():  I'm fun1() from liblb.so
 ```
+
+
+* **make lp**
+
+列出所有工程，其中DP指向默认工程配置目录
+```
+root@fnc:MakeDoxygen# make lp
+        pi1=script/default
+                pi1_arg=bin
+        pi2=script/prj_liba
+                pi2_arg=mlib
+        pi3=script/prj_libb
+                pi3_arg=mlib
+DP=pi1
+```
+
+* **make ep DP=pixx**
+
+编辑某工程配置脚本
+
+![image](doc/image/ep.png)
+
+* **make gdb DP=pixx**
+
+以gdb调试方式运行，条件需要在工程配置脚本打开 "-g" 选项
+
+* **make gdb-core**
+
+打开core输出文件调试程序
+
+## 脚本编辑
+
+Makefile基本可以作为一个通用模板，无特殊需要无需做修改。  
+通常需要修改的脚本包括:
+
+* **script/common.mk**  
+* **script/config.mk** 
+* **script/listprj.mk** 
+* **script/xxx/project.mk**  
+* **script/xxx/filelist.mk**  
+
+
+
 
 ##explain/解释
 * make configure
@@ -189,6 +241,6 @@ Replace
 PRJ_NAME = "[Project-Name]"
 ```
 
-![image](http://img-storage.qiniudn.com/15-10-21/68367498.jpg) 
+![im.age](http://img-storage.qiniudn.com/15-10-21/68367498.jpg) 
 ![imageass](image/af.bmp)
 [点击跳转](#KnowBug/)
