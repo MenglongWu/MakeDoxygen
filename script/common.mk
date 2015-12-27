@@ -2,7 +2,8 @@
 # config your default value
 # ARCH=xxxx
 
-
+# ARCH=x
+SUPPORT_TARGET=x86 arm920t armv7 win32
 ifeq ("$(ARCH)", "")
 	ARCH=x86
 endif
