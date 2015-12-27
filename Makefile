@@ -191,13 +191,6 @@ else
 endif
 
 
-# CK_ARCH=$(shell ./ck.sh)
-
-# check-arch:
-# 	@if [ "$(CK_ARCH)" = "unknow" ]; \
-# 	then \
-# 		echo "CK_ARCH unknow"; \
-# 	fi
 #################################################################
 # def target beyond DP,ARG
 def:$(ARG)
@@ -273,10 +266,16 @@ $(OUTPUT_DIR)-$(ARCH):
 	@mkdir $(OUTPUT_DIR)-$(ARCH)
 
 # .PHONY:$(MAKE_DIR)
-init_dir:$(MAKE_DIR)
-	
+init_dir:$(CHECK_TARGET) $(MAKE_DIR)
+
+CHECK_TARGET:
+ifneq ("$(ARCH)","$(filter $(SUPPORT_TARGET), $(ARCH))") 
+$(error  "unsupport target [$(ARCH)]")
+endif
+
 $(MAKE_DIR):
 	@mkdir $@
+
 
 
 #################################################################
