@@ -2,12 +2,6 @@
 # config your default value
 # ARCH=xxxx
 
-SUPPOR_ARCH = x86 arm920t armv7 i586
-# ifneq ($(ARCH) , $(filter $(SUPPOR_ARCH), $(ARCH)) )
-# # $(warning  "file_list undefinessssssssd")
-# 	$(error  file_list undefinessssssssd)
-# endif
-
 
 ifeq ("$(ARCH)", "")
 	ARCH=x86
@@ -21,7 +15,7 @@ ifeq ("$(ARCH)", "armv7")
 	CROSS_COMPILE	=/opt/iTop-4412/4.3.2/bin/arm-linux-
 endif
 
-ifeq ("$(ARCH)", "i586")
+ifeq ("$(ARCH)", "win32")
 	CROSS_COMPILE	=i586-mingw32msvc-
 endif
 # todo More
@@ -43,14 +37,14 @@ CS_FLAGS    =
 ifeq ("$(ARCH)", "x86")
 	INCLUDE_DIR	+= 
 	LFLAGS		+= -Wl,-rpath=./:lib-x86/
-	LIB_DIR 	+= -L/usr/local/install/lib
+	LIB_DIR 	+= -L/usr/local/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_X86
 endif
 
 ifeq ("$(ARCH)", "armv7")
 	INCLUDE_DIR	+= -I/usr/4412/install/include
 	LFLAGS		+= -Wl,-rpath=./:./lib-armv7/
-	LIB_DIR 	+= -L/usr/4412/install/lib
+	LIB_DIR 	+= -L/usr/4412/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_ARMV7
 endif
 
@@ -58,15 +52,15 @@ endif
 ifeq ("$(ARCH)", "arm920t")
 	INCLUDE_DIR	+= -I/usr/arm920t/install/include
 	LFLAGS		+= -Wl,-rpath=./:./lib-arm920t/
-	LIB_DIR 	+= -L/usr/arm920t/install/lib
+	LIB_DIR 	+= -L/usr/arm920t/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_ARM920T
 endif
 
 
-ifeq ("$(ARCH)", "i586")
+ifeq ("$(ARCH)", "win32")
 	INCLUDE_DIR	+= -I/usr/win32/install/include
-	LFLAGS		+= -Wl,-rpath=./:./lib-win32/
-	LIB_DIR 	+= -L/usr/win32/install/lib
+	LFLAGS		+= -Wl,-rpath=./:./lib-$(ARCH)/
+	LIB_DIR 	+= -L/usr/win32/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_WIN32
 endif
 #################################################################
