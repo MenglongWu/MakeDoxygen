@@ -1,3 +1,4 @@
+#include <autoconfig.h>
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -6,7 +7,7 @@ extern "C" {
 	
 void lbfun1()
 {
-	printf("I'm fun1() from liblb.so\n");
+	printf("%s", CONFIG_LA_FUN1_STR);
 }
 
 #ifdef __cplusplus

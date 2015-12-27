@@ -7,6 +7,7 @@ extern "C" {
 
 void lafun1();
 void lafun2();
+void lafun3();
 
 
 #ifdef __cplusplus

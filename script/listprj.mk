@@ -1,7 +1,17 @@
-	pi1=script/default/project.mk
-	pi2=script/prj_liba/project.mk
-	pi3=script/prj_libb/project.mk
-	pi4=script/prj_smain/project.mk
+#################################################################
+# rule
+# path must be a directory, exist path/project.mk,path/filelist.mk
+#
+# pixxx=script/default
+# pixxx_arg=[all,mlib,elf...] one of us, [all, mlib,elf...] is top path Makefile operation
+	pi1=script/default
+		pi1_arg=bin
 
-DP=pi1
-file_prj=$($(DP))
+	pi2=script/prj_liba
+		pi2_arg=mlib
+
+	pi3=script/prj_libb
+		pi3_arg=mlib
+
+# default project item
+export DP=pi1
