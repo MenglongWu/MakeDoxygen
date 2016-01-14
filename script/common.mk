@@ -75,7 +75,6 @@ endif
 #	LFLAGS		+= -Wl,-rpath=./:./lib-$(ARCH)/
 #	LIB_DIR 	+= -L/usr/your_target/install/lib -L./lib-$(ARCH)
 #	CFLAGS		+= -DTARGET_your_target
-endif
 # endif
 #################################################################
 
