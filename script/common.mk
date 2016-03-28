@@ -20,6 +20,10 @@ ifeq ("$(ARCH)", "win32")
 	CROSS_COMPILE	=i586-mingw32msvc-
 endif
 # todo More
+# ifeq ("$(ARCH)", "your_target")
+# 	CROSS_COMPILE	= your crosstools directory
+# endif
+
 
 
 #################################################################
@@ -64,5 +68,13 @@ ifeq ("$(ARCH)", "win32")
 	LIB_DIR 	+= -L/usr/win32/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_WIN32
 endif
+
+# todo More
+#ifeq ("$(ARCH)", "your_target")
+#	INCLUDE_DIR	+= -I/usr/your_target/install/include
+#	LFLAGS		+= -Wl,-rpath=./:./lib-$(ARCH)/
+#	LIB_DIR 	+= -L/usr/your_target/install/lib -L./lib-$(ARCH)
+#	CFLAGS		+= -DTARGET_your_target
+# endif
 #################################################################
 
