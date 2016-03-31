@@ -20,6 +20,7 @@
 #	- script/listprj.mk
 #	- script/default/project.mk
 #	- script/default/listprj.mk
+SHELL=/bin/bash
 
 export TOP_DIR = $(realpath ./)
 
@@ -192,6 +193,17 @@ endif
 
 
 #################################################################
+NORMAL = "\e[0;1m"
+BLACK = "\e[30;1m"
+RED  =  "\e[31;1m"
+GREEN = "\e[32;1m"
+YELLOW = "\e[33;1m"
+BLUE  = "\e[34;1m"
+PURPLE = "\e[35;1m"
+CYAN  = "\e[36;1m"
+WHITE = "\e[37;1m"
+
+#################################################################
 # def target beyond DP,ARG
 def:$(ARG)
 
@@ -216,12 +228,12 @@ configure: init_dir
 
 # 
 dis:echo-arch elf
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"				$(NORMAL)
 	@$(OBJDUMP) -S $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) > $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)	
 
 # create bin file, for system on chip without operating system
 bin:echo-arch elf
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)"				$(NORMAL)
 	@$(OBJCOPY) -O binary -S $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)
 #################################################################
 # it's a ELF application program file on linux,*.lds is auto loaded 
@@ -229,33 +241,33 @@ bin:echo-arch elf
 elf:echo-arch $(load_lds)
 
 load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
 	@$(CC) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OBJS) $(LIB_DIR) $(LFLAGS)
 
 # it's a bootloader bin file,user have to select *.lds file by your self
 # default file_lds = boot.lds
 load_lds-y:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
 
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
 	@$(LD) -T$(file_lds) $(OBJS) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(LFLAGS) $(LIB_DIR)  
 #################################################################
 .PHONY: mlib
 mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"				$(NORMAL)
 	@$(CC) -shared -fPIC -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) $(OBJS)
-	@echo "    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"				$(NORMAL)
 	@$(AR) rcs $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) $(OBJS)
 #################################################################
 echo-arch:
-	@echo "    ARCH       [$(ARCH)]"
+	@echo -e $(YELLOW)"    ARCH       [$(ARCH)]"										$(NORMAL)
 %.o:%.c
-	@echo "    compile    $^"
+	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
 	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR)
 %.o:%.cpp
-	@echo "    compile    $^"
+	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
 	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) 
 %.o:%.S
-	@echo "    compile    $^"
+	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
 	@$(CC) -o $@ -c $^ $(CS_FLAGS) $(INCLUDE_DIR)
 
 
