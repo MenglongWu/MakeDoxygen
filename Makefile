@@ -92,6 +92,7 @@ endif
 
 
 
+
 #################################################################
 # select which file be complie,it edit in config_app_file.mk
 # Import all files,it edit in config_xxx_file_list.mk
@@ -168,12 +169,13 @@ LD 	= $(CROSS_COMPILE)ld
 AR  = $(CROSS_COMPILE)ar
 OBJDUMP = $(CROSS_COMPILE)objdump
 OBJCOPY = $(CROSS_COMPILE)objcopy
+STRIP = $(CROSS_COMPILE)strip
 
 #################################################################
 # CFLAGS		- Compile general option
 # CC_FLAGS		- Compile only for *.c file option
 # CS_FLAGS		- Compile only for *.S file option
-CFLAGS		+= -g  	 -Wall  -rdynamic
+CFLAGS		+= 	 -Wall  -rdynamic
 ifeq ("$(GCC_G++)","gcc") # only compile gcc use -std=gnu99 option
 	CC_FLAGS    = -std=gnu99
 else
@@ -228,12 +230,12 @@ configure: init_dir
 
 # 
 dis:echo-arch elf
-	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"				$(NORMAL)
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"   			$(NORMAL)
 	@$(OBJDUMP) -S $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) > $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)	
 
 # create bin file, for system on chip without operating system
 bin:echo-arch elf
-	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)"				$(NORMAL)
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)"   			$(NORMAL)
 	@$(OBJCOPY) -O binary -S $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN)
 #################################################################
 # it's a ELF application program file on linux,*.lds is auto loaded 
@@ -241,7 +243,7 @@ bin:echo-arch elf
 elf:echo-arch $(load_lds)
 
 load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
-	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
+	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)" 				$(NORMAL)
 	@$(CC) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OBJS) $(LIB_DIR) $(LFLAGS)
 
 # it's a bootloader bin file,user have to select *.lds file by your self
@@ -305,6 +307,19 @@ clean:
 disclean:clean
 	@rmdir $(OUTPUT_DIR)-$(ARCH) --ignore
 #################################################################
+
+strip:strip-$(ARG)
+
+strip-elf:
+	@echo -e $(YELLOW)"    strip     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
+	@$(STRIP) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)
+
+strip-mlib:
+	@echo -e $(YELLOW)"    strip     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"				$(NORMAL)
+	@$(STRIP) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)
+	@echo -e $(YELLOW)"    strip     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"					$(NORMAL)
+	@$(STRIP) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) 
+
 
 
 run:
@@ -378,6 +393,9 @@ rmdb:
 sqlite3:
 	sqlite3 /etc/xx.db
 
+splint:
+	@echo TODO ...
+	
 #################################################################
 # copy/install output file to other directory
 copy:copy_$(ARG)

@@ -21,3 +21,10 @@ alldisclean:
 	$(MAKE) DP=pi2 disclean --no-print-directory
 	$(MAKE) DP=pi3 disclean --no-print-directory
 	$(MAKE) DP=pi1 disclean --no-print-directory
+
+# strip all output file STRTAB section
+.PHONY:allstrip
+allstrip:
+	$(MAKE) DP=pi1 strip --no-print-directory
+	$(MAKE) DP=pi2 strip --no-print-directory
+	$(MAKE) DP=pi3 strip --no-print-directory
