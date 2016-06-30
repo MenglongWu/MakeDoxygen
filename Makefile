@@ -21,7 +21,6 @@
 #	- script/default/project.mk
 #	- script/default/listprj.mk
 SHELL=/bin/bash
-
 export TOP_DIR = $(realpath ./)
 
 #################################################################
@@ -38,11 +37,11 @@ else
 endif
 
 ifeq ("$(file_config)", "")
-	ifeq ($(TOP_DIR)/script/config.mk, $(wildcard $(TOP_DIR)/script/config.mk))
-		file_config = ./script/config.mk
+	ifeq ($(TOP_DIR)/.config, $(wildcard $(TOP_DIR)/.config))
+		file_config = .config
 		include $(file_config)
 	else
-		file_config = ========== no such file ./script/config.mk
+		file_config = ========== no such file .config
 	endif
 else
 	include $(file_config)
@@ -53,9 +52,13 @@ endif
 # load all project items
 # DP,ARG defined in listprj.mk
 include script/listprj.mk
+mconf=script/kconfig
+	mconf_arg=mlib
+
 
 ifeq ("$($(DP)_arg)", "")
-	ARG=all
+$(warning  "project '$(DP)' unfind")
+	exit
 else
 	ARG=$($(DP)_arg)
 endif
@@ -72,6 +75,7 @@ ifeq ($(file_prj), $(wildcard $(file_prj)))
 else
 $(warning  "file_prj undefined")
 	file_prj = 
+	exit
 endif
 
 # checking
@@ -80,12 +84,14 @@ ifeq ($(file_list), $(wildcard $(file_list)))
 else
 $(warning  "file_list undefined")
 	 file_list = 
+	 exit
 endif
 
 
 # checking
 ifeq ("$(SRCS-y)", "")
 $(warning  "SRCS-y is empty")
+	exit
 endif
 
 
@@ -163,7 +169,7 @@ CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
 
 
 #################################################################
-GCC_G++ = gcc
+GCC_G++ = g++
 CC 	= $(CROSS_COMPILE)$(GCC_G++)
 LD 	= $(CROSS_COMPILE)ld
 AR  = $(CROSS_COMPILE)ar
@@ -220,7 +226,7 @@ ep:
 	vi -o $(file_prj) $(file_list)
 #################################################################
 # 
-all:echo-arch elf bin dis
+one:echo-arch elf bin dis
 
 #################################################################
 # create autoconfig.h and directory
@@ -228,6 +234,12 @@ configure: init_dir
 	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
 	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
+menuconfig:mconf
+	./script/kconfig/mconf Kconfig
+	mkheader .config include/autoconfig.h $(PRJ_NAME)
+
+mconf:
+	$(MAKE) -C script/kconfig
 # 
 dis:echo-arch elf
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"   			$(NORMAL)
@@ -241,6 +253,7 @@ bin:echo-arch elf
 # it's a ELF application program file on linux,*.lds is auto loaded 
 # by system from default path
 elf:echo-arch $(load_lds)
+
 
 load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)" 				$(NORMAL)
@@ -293,8 +306,8 @@ $(MAKE_DIR):
 
 
 #################################################################
-.PHONY: clean
-clean:
+.PHONY: aclean
+aclean:
 	@-rm -f $(OBJS)  \
 		$(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS) \
 		$(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) \
@@ -303,12 +316,13 @@ clean:
 		$(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)
 	@-rm -f core
 
-.PHONY: disclean
-disclean:clean
+.PHONY: adistclean
+adistclean:aclean
 	@rmdir $(OUTPUT_DIR)-$(ARCH) --ignore
+
 #################################################################
 
-strip:strip-$(ARG)
+astrip:strip-$(ARG)
 
 strip-elf:
 	@echo -e $(YELLOW)"    strip     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
@@ -319,6 +333,22 @@ strip-mlib:
 	@$(STRIP) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)
 	@echo -e $(YELLOW)"    strip     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"					$(NORMAL)
 	@$(STRIP) $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) 
+
+
+
+#################################################################
+# copy/install output file to other directory
+acopy:acopy_$(ARG)
+
+acopy_elf:acopy_all
+acopy_all:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /usr/armdebug/
+acopy_bin:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /usr/armdebug/
+acopy_mlib:
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /usr/armdebug/$(OUTPUT_DIR)-$(ARCH)
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /usr/armdebug/$(OUTPUT_DIR)-$(ARCH)
+
 
 
 
@@ -369,11 +399,14 @@ print_env:
 help:
 	@echo ======================== Makefile help ========================
 	@echo "    "configure"    "make autoconfig.h from config file default config.mk
-	@echo "    "all"          "create *.elf,*.bin
-
+	@echo "    "all"          "compil all sub project
 	@echo "    "clean"        "clean output file depend on *.o and OUTPUT_xxx\(OUTPUT_ELF and so on\)
+	@echo "    "distclean"    "clean all ourput file and directory
+	@echo "    "strip"        "remove section
+	@echo "    "copy"         "copy output file to default directory
+
 	@echo "    "lp"           "list project
-	@echo "    "library"      "create *.so, *.a
+	@echo "    "mlib"         "create *.so, *.a
 	@echo "    "print_env"    "display environment,only for debug Makefile
 	@echo "    "run"          "run *elf 
 	@echo "    "gdb"          "gdb debug
@@ -386,6 +419,10 @@ help:
 	@echo "    "SRCS-y"       "select file be compiled
 	@echo "                   "SRCS-y += src/main.c src/foo.c
 	@echo "                   "SRCS-\(CONFIG_MODULE\) += mod/module.c
+	@echo "    "PRJS"         "sub project list
+	@echo "                   "PRJS += pix piy piz
+	@echo "                   "compile 3 project one by one
+
 # user define
 
 rmdb:
@@ -396,15 +433,62 @@ sqlite3:
 splint:
 	@echo TODO ...
 	
-#################################################################
-# copy/install output file to other directory
-copy:copy_$(ARG)
 
-copy_elf:copy_all
-copy_all:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /usr/armdebug/
-copy_bin:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /usr/armdebug/
-copy_mlib:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /usr/armdebug
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /usr/armdebug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#################################################################
+# all sub project
+
+each-all       := $(foreach n,$(PRJS),all-$(n))
+each-clean     := $(foreach n,$(PRJS),clean-$(n))  clean-mconf
+each-distclean := $(foreach n,$(PRJS),distclean-$(n))
+each-strip     := $(foreach n,$(PRJS),strip-$(n))
+each-copy      := $(foreach n,$(PRJS),copy-$(n))
+
+
+.PHONY:all
+all:$(each-all)
+$(each-all):
+	$(MAKE) DP=$(patsubst all-%,%,$@) --no-print-directory
+
+
+# clean all project output
+.PHONY:clean
+clean:$(each-clean)
+$(each-clean):
+	@$(MAKE) DP=$(patsubst clean-%,%,$@) aclean --no-print-directory
+	
+# echo DP=$@
+# remote all output file and empty directory which create by Makefile
+.PHONY:distclean
+distclean:$(each-distclean)
+$(each-distclean):
+	@$(MAKE) DP=$(patsubst distclean-%,%,$@) adistclean --no-print-directory
+
+# strip all output file STRTAB section
+.PHONY:strip
+strip:$(each-strip)
+$(each-strip):
+	$(MAKE) DP=$(patsubst strip-%,%,$@) astrip --no-print-directory
+
+# copy all output file
+.PHONY:copy
+copy:$(each-copy)
+$(each-copy):
+	@$(MAKE) DP=$(patsubst copy-%,%,$@) acopy --no-print-directory
+	
+
+
+# End all sub project
