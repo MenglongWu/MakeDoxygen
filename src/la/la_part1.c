@@ -7,7 +7,7 @@ extern "C" {
 
 void lafun1()
 {
-	printf("%s", CONFIG_LA_FUN1_STR);
+	printf("%s\n", CONFIG_LA_FUN1_STR);
 }
 
 

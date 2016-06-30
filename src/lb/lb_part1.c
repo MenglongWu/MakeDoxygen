@@ -7,7 +7,7 @@ extern "C" {
 	
 void lbfun1()
 {
-	printf("%s", CONFIG_LA_FUN1_STR);
+	printf("%s\n", CONFIG_LA_FUN1_STR);
 }
 
 #ifdef __cplusplus

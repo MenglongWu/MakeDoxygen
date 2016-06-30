@@ -7,7 +7,7 @@ extern "C" {
 	
 void lbfun2()
 {
-	printf("%s", CONFIG_LB_FUN2_STR);
+	printf("%s\n", CONFIG_LB_FUN2_STR);
 }
 
 #ifdef CONFIG_USE_LB_PART2
