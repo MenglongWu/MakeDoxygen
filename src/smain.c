@@ -2,6 +2,7 @@
 #include "math.h"
 
 #include <autoconfig.h>
+#include "proginfo.h"
 #include "la/liba.h"
 #include "lb/libb.h"
 
@@ -14,9 +15,9 @@ int main()
 {
 	printf("Macro:\n"
 		"\tPRJ_NAME      %s\n"
-		"\tPRJ_VERSION    %d\n"
-		"\tPRJ_PATCHLEVEL %d\n"
-		"\tPRJ_SUBLEVEL   %d\n"
+		"\tPRJ_VERSION    %s\n"
+		"\tPRJ_PATCHLEVEL %s\n"
+		"\tPRJ_SUBLEVEL   %s\n"
 		"\tBUILD_DATE    %s\n",
 		PRJ_NAME,
 		PRJ_VERSION,
@@ -62,3 +63,21 @@ int main()
 // #ifdef __cplusplus
 // }
 // #endif
+
+
+
+#ifdef PRJ_NAME
+PROG_INFO(project, PRJ_NAME);
+#endif
+
+#if  defined(PRJ_VERSION) && defined(PRJ_PATCHLEVEL) && defined(PRJ_SUBLEVEL)
+PROG_INFO(version, PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
+#endif
+
+#ifdef BUILD_DATE
+PROG_INFO(build, BUILD_DATE);
+#endif
+
+PROG_INFO(Author, "MenglongWu");
+PROG_INFO(depend, "liba.so libb.so");
+PROG_INFO(description, "MakeDoxygen demo");

@@ -1,8 +1,8 @@
 
 PRJ_NAME = "[lib-b]"
-PRJ_VERSION    = 1
-PRJ_PATCHLEVEL = 0
-PRJ_SUBLEVEL   = 0
+PRJ_VERSION    = "1"
+PRJ_PATCHLEVEL = "0"
+PRJ_SUBLEVEL   = "0"
 
 # default download.elf,download.dis,download.bin
 OUTPUT_ELF	= 
