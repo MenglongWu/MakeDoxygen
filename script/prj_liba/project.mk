@@ -1,8 +1,8 @@
 
 PRJ_NAME = "[lib-a]"
-PRJ_VERSION    = 1
-PRJ_PATCHLEVEL = 0
-PRJ_SUBLEVEL   = 0
+PRJ_VERSION    = "1"
+PRJ_PATCHLEVEL = "0"
+PRJ_SUBLEVEL   = "0"
 
 
 

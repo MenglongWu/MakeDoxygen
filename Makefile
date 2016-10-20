@@ -162,14 +162,14 @@ NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 # LFLAGS	    += 
 # LIB_DIR     += 
 CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
-		-DPRJ_VERSION=$(PRJ_VERSION)	\
-		-DPRJ_PATCHLEVEL=$(PRJ_PATCHLEVEL)	\
-		-DPRJ_SUBLEVEL=$(PRJ_SUBLEVEL)	\
+		-DPRJ_VERSION=\"$(PRJ_VERSION)\"	\
+		-DPRJ_PATCHLEVEL=\"$(PRJ_PATCHLEVEL)\"	\
+		-DPRJ_SUBLEVEL=\"$(PRJ_SUBLEVEL)\"	\
 		-DPRJ_NAME=\"$(PRJ_NAME)\"
 
 
 #################################################################
-GCC_G++ = g++
+GCC_G++ = gcc
 CC 	= $(CROSS_COMPILE)$(GCC_G++)
 LD 	= $(CROSS_COMPILE)ld
 AR  = $(CROSS_COMPILE)ar
@@ -342,12 +342,12 @@ acopy:acopy_$(ARG)
 
 acopy_elf:acopy_all
 acopy_all:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /usr/armdebug/
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) /work/armdebug/
 acopy_bin:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /usr/armdebug/
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_BIN) /work/armdebug/
 acopy_mlib:
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /usr/armdebug/$(OUTPUT_DIR)-$(ARCH)
-	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /usr/armdebug/$(OUTPUT_DIR)-$(ARCH)
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
+	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
 
 
 
