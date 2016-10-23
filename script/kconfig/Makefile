@@ -32,3 +32,6 @@ all:$(obj)
 %.o:%.c
 	@echo -e $(CYAN)"    compile    $^"  $(NORMAL)
 	@$(CC) -o $@ -c $^ -Ilxdialog -lncurses
+
+clean:
+	@-rm -f $(obj)

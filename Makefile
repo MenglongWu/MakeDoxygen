@@ -230,16 +230,20 @@ one:echo-arch elf bin dis
 
 #################################################################
 # create autoconfig.h and directory
-configure: init_dir
+configure: init_dir mkheader
 	echo $(file_config) include/autoconfig.h $(PRJ_NAME)
 	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
-menuconfig:mconf
+menuconfig:mconf mkheader
 	./script/kconfig/mconf Kconfig
-	mkheader .config include/autoconfig.h $(PRJ_NAME)
+	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
 
 mconf:
 	$(MAKE) -C script/kconfig
+
+mkheader:
+	$(MAKE) -C script/mkheader
+
 # 
 dis:echo-arch elf
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_DIS)"   			$(NORMAL)
@@ -463,10 +467,11 @@ all:$(each-all)
 $(each-all):
 	$(MAKE) DP=$(patsubst all-%,%,$@) --no-print-directory
 
-
 # clean all project output
 .PHONY:clean
 clean:$(each-clean)
+	@$(MAKE) clean -C script/kconfig  --no-print-directory
+	@$(MAKE) clean -C script/mkheader  --no-print-directory
 $(each-clean):
 	@$(MAKE) DP=$(patsubst clean-%,%,$@) aclean --no-print-directory
 	
