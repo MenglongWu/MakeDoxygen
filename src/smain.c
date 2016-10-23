@@ -6,10 +6,9 @@
 #include "la/liba.h"
 #include "lb/libb.h"
 
-// #ifdef __cplusplus
-// extern "C" {
-
-// #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int main()
 {
@@ -60,24 +59,16 @@ int main()
 	
 	return 0;
 }
-// #ifdef __cplusplus
-// }
-// #endif
 
 
 
-#ifdef PRJ_NAME
 PROG_INFO(project, PRJ_NAME);
-#endif
+PROG_VERSION( PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
+PROG_BUILD(BUILD_DATE);
+PROG_AUTHOR("MenglongWu");
+PROG_DEPEND( "liba.so libb.so");
+PROG_DESCRIPTION( "MakeDoxygen demo");
 
-#if  defined(PRJ_VERSION) && defined(PRJ_PATCHLEVEL) && defined(PRJ_SUBLEVEL)
-PROG_INFO(version, PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
+#ifdef __cplusplus
+}
 #endif
-
-#ifdef BUILD_DATE
-PROG_INFO(build, BUILD_DATE);
-#endif
-
-PROG_INFO(Author, "MenglongWu");
-PROG_INFO(depend, "liba.so libb.so");
-PROG_INFO(description, "MakeDoxygen demo");
