@@ -218,6 +218,10 @@ def:$(ARG)
 # do something for all target
 include script/allprj.mk
 
+se:
+	$(MAKE) -C ./ 2>&1 | grep error --color=auto -A 3
+sw:
+	$(MAKE) -C ./ 2>&1 | grep warning --color=auto -A 3
 # list all project
 lp:
 	@cat script/listprj.mk | grep "=script/.\|arg=" | grep -v "#"

@@ -3,7 +3,12 @@
 *.sublime-workspace
 .tags_sorted_by_file
 .tags
+*.*.o.cmd
 *.bak
 release
 release-x86
 release-arm920t
+script/kconfig/*.o
+script/kconfig/mconf
+script/mkheader/*.o
+script/mkheader/mkheader
