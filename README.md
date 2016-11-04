@@ -1,59 +1,127 @@
-#MakeDoxygen
-It's a project templet, include **Makefile temple** and **Doxygen templet**.
 
-##How to use/怎么使用
+> Author: Menglong Woo
 
-* **make allclean**  
+# MakeDoxygen
 
-按照顺序清楚总工程下若干工程输出文件  
+## 1. 介绍
 
+本工程是一个通用型工程模板，工程里可以方便管理若干子工程，与普遍的linux开源工程不一样的是，它只拥有一个Makefile来构建，而无需在各个子目录下散落Makefile。每个子工程通过fileslist.mk和project.mk描述，各子工程的描述文件放于各自工程目录，默认工程目录位于script下，如script/SubProject、script/default。从linux源码目录里分离出mconf工具用于实现make menuconfig配置工程，生成的.config用本工程自带的工具mkheader生成include/autoconfig.h。
 
-* **make alldisclean**
+编译过程高亮显示，差错清晰明了。
 
-按照顺序清楚总工程下若干工程输出文件，删除那些由Makefile自动生成，并且是空的目录
+## 2. 构建
+Makefile基本可以作为一个通用模板，无特殊需要无需做修改。  
+通常需要修改的是其余脚本:
 
-* **make configure**
+- [Makefile](#makefile_target)
+- [common.mk](./script/README.md)  
+- [config.mk](./script/README.md)  
+- [listprj.mk](./script/README.md)  
+- [project.mk](./script/README.md)   
+- [filelist.mk](./script/README.md)   
+- [allprj.mk](./script/README.md)   
+- [Kconfig](#kconfig)
 
-读取script/config.mk（格式如linux内核.config）生成总工程配置文件include/autoconfig.h
+根目录下的Makefile是工程管理入口；  
+allprj.mk本工程中所有子工程的依赖关系（也可以没有依赖）；  
+common.mk本工程所有子工程所共有的配置如环境变量、生成目录、库路径等；  
+listprj.mk列出所子工程以及其子工程目录；  
+filelist.mk子工程各自所包含的源文件；  
+project.mk子工程各自的编译选项，部分参数的缺省值在common.mk文件里；
+
+## 3. 移植
+
+首先尝试不做任何修改的情况下编译测试工程，如无任何错误才可根据需求修改模板。
+
+配置工程menuconfig保存默认配置直接退出保存，生成 **.config** 与 **include/autoconfig.h**
+![image](doc/menuconfig.png)
 
 ```
-root@fnc:MakeDoxygen# make configure 
-echo ./script/config.mk include/autoconfig.h "[default-project]"
-./script/config.mk include/autoconfig.h [default-project]
-read config file :./script/config.mk
+root@UbuntuServer:MakeDoxygen$ make menuconfig
+make -C script/kconfig
+./script/mkheader/mkheader .config include/autoconfig.h "[default-project]"
+read config file :.config
 make header file :include/autoconfig.h
 ```
+编译生成libla.so liblb.so dafault.elf三个子工程最终文件，证明模板正常使用。
 
-* **make allp** make all project
+具体如何在模板基础上定制自己的工程详细阅读 (构建)[1]
+```
+root@UbuntuServer:MakeDoxygen$ make all
+make DP=pi3 --no-print-directory
+    ARCH       [x86] 
+    compile    src/lb/lb_part1.c 
+    compile    src/lb/lb_part2.c 
+    create     lib-x86/liblb.so 
+    create     lib-x86/liblb.a 
+make DP=pi2 --no-print-directory
+    ARCH       [x86] 
+    compile    src/la/la_part1.c 
+    compile    src/la/la_part2.c 
+    create     lib-x86/libla.so 
+    create     lib-x86/libla.a 
+make DP=pi1 --no-print-directory
+    ARCH       [x86] 
+    compile    src/smain.c 
+    create     release-x86/default.elf 
+```
+<span id="kconfig"></span>
+## 4. Kconfig
 
-“按照顺序”编译总工程下若干工程
+是选择配置数据库脚本，最终生成.config为目的，如何编辑请参考任意 [linux kernel] 内核文档 (Documentation/kbuild/kconfig-language.txt)
+
+<span id="makefile_target"></span>
+## 5. Makefile 目标
+
+- **make menuconfig**
+
+配置工程，编辑 [Kconfig] 修改工程配置选项
+
+- **make**
+
+编译默认子工程
+
+- **make all**
+
+编译所有子工程，默认生成文件位于对应平台目录下，如release-x86 lib-x86
+
+- **make strip**
+
+执行strip去掉所有子工程的ELF格式文件标签
+
+- **make copy**
+
+拷贝所有子工程到指定目录，该目录通常是tftp/NFS等网络共享目录，用存放目标板平台的交叉编译程序
+
+- **make clean**
+
+清除所有子工程生成文件
+
+- **make distclean**
+
+清除所有子工程生成文件，如果对应平台已经清空，则同时删除平台目录。
+
+- **make run**
+
+本地运行总工程下的默认输出文件。通常只有 x86 平台下才可能执行该命令。
+如默认执行工程 **pi1** 所生成的download.elf文件，工程配置相对目录 **script/default** ，生成elf格式文件，elf文件命名为 **download.elf**
+
+script/listprj.mk
 
 ```
-root@fnc:MakeDoxygen# make allp
-make DP=pi2
-make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
-    ARCH       [x86]
-    create     lib-x86/libla.so
-    create     lib-x86/libla.a
-make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
-make DP=pi3
-make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
-    ARCH       [x86]
-    create     lib-x86/liblb.so
-    create     lib-x86/liblb.a
-make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
-make DP=pi1
-make[1]: Entering directory `/mnt/linuxProject/MakeDoxygen'
-    ARCH       [x86]
-    compile    src/smain.c
-    create     release-x86/default.elf
-    create     release-x86/download.bin
-make[1]: Leaving directory `/mnt/linuxProject/MakeDoxygen'
+	pi1=script/default
+		pi1_arg=elf
+export DP=pi1
 ```
 
-* **make run** run default project output target
+script/default/project.mk
 
-运行总工程下的默认输出文件，通常是*.elf
+```
+OUTPUT_ELF	= download.elf
+```
+
+默认输出如下内容:  
+对于工程里的几个宏来历查阅 [工程预定义宏](#prj_macro)
 
 ```
 root@fnc:MakeDoxygen# make run
@@ -69,117 +137,50 @@ test lafun1():  I'm fun1() from libla.so
 test lafun2():  I'm fun2() from libla.so
 test lbfun1():  I'm fun1() from liblb.so
 ```
+- **make se**
+ 
+show eror 高亮显示编译error
 
+- **make sw**  
 
-* **make lp**
+show warning 高亮显示编译warning
 
-列出所有工程，其中DP指向默认工程配置目录
+- **make lp**
+
+列出所有子工程，其中DP指向默认工程配置目录
+
 ```
-root@fnc:MakeDoxygen# make lp
-        pi1=script/default
-                pi1_arg=bin
-        pi2=script/prj_liba
-                pi2_arg=mlib
-        pi3=script/prj_libb
-                pi3_arg=mlib
+root@UbuntuServer:MakeDoxygen$ make lp
+	pi1=script/default
+		pi1_arg=elf
+	pi2=script/prj_liba
+		pi2_arg=mlib
+	pi3=script/prj_libb
+		pi3_arg=mlib
 DP=pi1
 ```
 
-* **make ep DP=pixx**
+- **make ep DP=pi1**
 
-编辑某工程目录下(script/xxx)两个配置脚本project.mk,filelist.mk
+同时打开并编辑pi1子工程目录下两个配置脚本project.mk,filelist.mk
 
 ![image](doc/image/ep.png)
 
-* **make gdb DP=pixx**
+- **make gdb DP=pi1**
 
-以gdb调试方式运行，条件需要在工程配置脚本打开 "-g" 选项
+以gdb调试方式运行子工程pi1的输出文件，条件需要在工程配置脚本 [project.mk] 打开 "-g" 选项
 
-* **make gdb-core**
+- **make gdb-core**
 
 打开core输出文件调试程序
 
-## 脚本编辑
-
-Makefile基本可以作为一个通用模板，无特殊需要无需做修改。  
-通常需要修改的脚本包括:
-
-
-* [**script/common.mk** ](./script/README.md)  
-* [**script/config.mk** ](./script/README.md)  
-* [**script/listprj.mk** ](./script/README.md)  
-* [**script/xxx/project.mk** ](./script/README.md)   
-* [**script/xxx/filelist.mk** ](./script/README.md)   
-
-
-
-
-##explain/解释
-* make configure
-
-默认执行 **mkheader ./script/.config include/autoconfig.h "[Project Name]"**
-
-默认读取 **script/.config** 配置文件生成 **include/autoconfig.h** 头文件，最后一个参数是工程名，.config的格式与Linux Kernel 里的.config相同。转换过程需要工具 **mkheader**,该工具位于tool目录下，将其拷贝到cp ./tool/mkheader /bin/mkheader。
-
-**获取 mkheader**
-
-git clone https://github.com/MenglongWu/mkheader.git
-
-** 运行实例 ** 
-
-```
-root@fnc:MakeDoxygen# make configure 
-read config file :./script/./config
-make header file :include/autoconfig.h
-root@fnc:MakeDoxygen# ls ./include/
-autoconfig.h
-```
-
-```
-root@fnc:MakeDoxygen# cat script/.config 
-CONFIG_KERNEL = y
-# CONFIG_DEBUG = y
-CONFIG_DEV_COUNT = 8
-CONFIG_FILE_SYSTEM = n
-CONFIG_NFS_PATH = "/mnt/nfs"
-
-```
-
-```
-root@fnc:MakeDoxygen# cat include/autoconfig.h 
-/*
- * Automatically generated C config: don't edit
- * Project "[Project Name]" Configuration
- * Depand on ./script/.config
- */
-#ifndef _AUTO_CONFIG_H_
-#define _AUTO_CONFIG_H_
-
-#define CONFIG_KERNEL                                           1
-#define CONFIG_DEV_COUNT                                        8
-#define CONFIG_NFS_PATH                                         "/mnt/nfs"
-
-#endif
-```
-
-
-
-* make all
-
-生成 *.elf 目标文件
-
-* make library
-
-生成 *.so\*.a 目标文件
 
 * make print_env
 
-
 仅仅为了调试Makefile，输出各环境变量
 
-
 ```
-root@fnc:MakeDoxygen# make print_env 
+root@UbuntuServer:MakeDoxygen# make print_env 
 =========================================================
 PRJ_VERSION   = 1.0.0
 PRJ_NAME      = [Project Name]
@@ -209,39 +210,73 @@ LIB_DIR       = -L/usr/local/install/lib
 CFLAGS        = -DTARGET_X86 -DBUILD_DATE="2015-10-19 15:09:22" -DPRJ_VERSION="1.0.0" -DPRJ_NAME="[Project Name]" -g -Wall -static -rdynamic
 ```
 
+- **make a+xxx**
+
+几乎以上带有 **所有子工程** 含义的目标（除make all外），在目标前加入 **a** 即可只对当前默认工程执行操作。
+
+	- make astrip
+	- make acopy
+	- make aclean
+	- make distclean
+
+- ** make DP=xxx**
+
+本次make临时将xxx工程作为默认工程执行操作，以上任何目标均可添加选项
+	
+	- make DP=pi3
+	- make DP=pi3 acopy
+	- make DP=pi3 aclean
+	- make DP=pi3 adistclean
+
+## 6. 特性
+
+### 模块
+
+与linux模块驱动一样头文件proginfo.h定义了相同的宏定义MODULE_INFO，编译后生成.modinfo段，此目的是为了在x86平台下在不允许程序的情况下执行modinfo的情况下查看elf文件信息。
+
+```
+root@UbuntuServer:MakeDoxygen$ modinfo release-x86/default.elf 
+filename:       release-x86/default.elf
+project:        [default-project]
+version:        1.0.0
+build:          2016-11-01_21:30:09
+author:         MenglongWu
+build:          liba.so libb.so
+description:    MakeDoxygen demo
+```
+<span id="prj_macro"></span>
+### 工程预定义宏
+
+- BUILD_DATE  
+每次工程编译后表示编译的时间
+
+- PRJ_VERSION\PRJ_PATCHLEVEL\PRJ_SUBLEVEL  
+子工程的版本信息，位于project.mk
+
+- PRJ_NAME  
+子工程名，位于project.mk
+
+
+## 7. 已知缺陷
+
+参考 [BUG.mk](./BUG.md)
+
+
 ---
 
-## Environment/环境变量
-* file_prj - 定义工程配置文件，默认script/project.mk
-* file_common - 定义公共环境变量文件，用于子工程里使用相同宏，包括CFLAGS，LDFLAGS等 
 
-##Directory/目录结构
-* doxygen - 
-* dowx
-
-
-##Context/联系
+## 联系
 **Email:**MenglongWoo@aliyun.com
 
-##Download/下载模板
+## 下载模板
 git clone https://github.com/MenglongWu/MakeDoxygen.git
 
 
-fsdf[sdf](operator)
-[[]: operator](operator)
-# []: operator
-_jfl_jliw **dfe**
-sd
 
-## KnowBug/
-gcc-4.3.2不支持带空格的宏，如下所示，更换 >4.4.1 版本gcc支持
-```
-Error
-PRJ_NAME = "[Project Name]"
-Replace
-PRJ_NAME = "[Project-Name]"
-```
-
-![im.age](http://img-storage.qiniudn.com/15-10-21/68367498.jpg) 
-![imageass](image/af.bmp)
-[点击跳转](#KnowBug/)
+[common.mk]:(./script/README.md)  
+[listprj.mk]:(./script/README.md)  
+[project.mk]:(./script/README.md)   
+[filelist.mk]:(./script/README.md)
+[BUG.mk]:(./script/README.md)
+[Kconfig]:(./README.md)
+[linux kernel]:https://github.com/torvalds/linux
