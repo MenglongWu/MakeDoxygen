@@ -3,7 +3,7 @@
 # ARCH=xxxx
 
 # ARCH=x
-SUPPORT_TARGET=x86 arm920t armv7 win32
+SUPPORT_TARGET=x86 arm920t armv7 win32  arm926
 ifeq ("$(ARCH)", "")
 	ARCH=x86
 endif
@@ -18,6 +18,9 @@ endif
 
 ifeq ("$(ARCH)", "win32")
 	CROSS_COMPILE	=i586-mingw32msvc-
+endif
+ifeq ("$(ARCH)", "arm926")
+	CROSS_COMPILE	=/opt/EasyArm/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-linux-
 endif
 # todo More
 # ifeq ("$(ARCH)", "your_target")
@@ -68,7 +71,14 @@ ifeq ("$(ARCH)", "win32")
 	LIB_DIR 	+= -L/usr/win32/install/lib -L./lib-$(ARCH)
 	CFLAGS		+= -DTARGET_WIN32
 endif
+ 
 
+ifeq ("$(ARCH)", "arm926")
+	INCLUDE_DIR	+= -I/usr/arm926/install/include
+	LFLAGS		+= -Wl,-rpath=./:./lib-$(ARCH)/
+	LIB_DIR 	+= -L/usr/arm926/install/lib -L./lib-$(ARCH)
+	CFLAGS		+= -DTARGET_ARM926
+endif
 # todo More
 #ifeq ("$(ARCH)", "your_target")
 #	INCLUDE_DIR	+= -I/usr/your_target/install/include
