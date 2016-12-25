@@ -20,6 +20,17 @@
 #	- script/listprj.mk
 #	- script/default/project.mk
 #	- script/default/listprj.mk
+# - 2016-12-25,Menglong Wu,MenglongWoo@aliyun.com
+#
+# V1.1
+# - 2016-6-30,Menglong Wu
+#	- script/kconfig
+#	- includeproginfo.h
+#
+# V1.2
+# - 2016-12-25,Menglong Wu
+#	- script/gitsha1.sh
+
 SHELL=/bin/bash
 export TOP_DIR = $(realpath ./)
 
@@ -46,7 +57,6 @@ ifeq ("$(file_config)", "")
 else
 	include $(file_config)
 endif
-
 
 #################################################################
 # load all project items
@@ -161,11 +171,24 @@ NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 # INCLUDE_DIR += 
 # LFLAGS	    += 
 # LIB_DIR     += 
+
+# SHA1="$(shell cat .sha1)"
+
+ifeq ("$(CONFIG_GIT_SHA1)", "y")
+	ifeq (".git/HEAD", "")
+	else
+		sha1_dep=$(shell ./script/sha1dep.sh)
+
+	endif
+	SHA1="$(shell cat .sha1)"
+endif
+
 CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
 		-DPRJ_VERSION=\"$(PRJ_VERSION)\"	\
 		-DPRJ_PATCHLEVEL=\"$(PRJ_PATCHLEVEL)\"	\
 		-DPRJ_SUBLEVEL=\"$(PRJ_SUBLEVEL)\"	\
-		-DPRJ_NAME=\"$(PRJ_NAME)\"
+		-DPRJ_NAME=\"$(PRJ_NAME)\" \
+		-D__GIT_SHA1__=\"$(SHA1)\"	
 
 
 #################################################################
@@ -213,10 +236,12 @@ WHITE = "\e[37;1m"
 
 #################################################################
 # def target beyond DP,ARG
-def:$(ARG)
+def: .sha1 $(ARG)
 
 # do something for all target
 include script/allprj.mk
+.sha1:$(sha1_dep)
+	@echo "$(shell ./script/gitsha1.sh)" > .sha1
 
 se:
 	$(MAKE) -C ./ 2>&1 | grep error --color=auto -A 3
@@ -476,6 +501,7 @@ $(each-all):
 clean:$(each-clean)
 	@$(MAKE) clean -C script/kconfig  --no-print-directory
 	@$(MAKE) clean -C script/mkheader  --no-print-directory
+	@-rm .sha1
 $(each-clean):
 	@$(MAKE) DP=$(patsubst clean-%,%,$@) aclean --no-print-directory
 	

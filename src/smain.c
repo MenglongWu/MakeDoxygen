@@ -65,6 +65,8 @@ int main()
 PROG_INFO(project, PRJ_NAME);
 PROG_VERSION( PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
 PROG_BUILD(BUILD_DATE);
+PROG_GITSHA1(__GIT_SHA1__);
+
 PROG_AUTHOR("MenglongWu");
 PROG_DEPEND( "liba.so libb.so");
 PROG_DESCRIPTION( "MakeDoxygen demo");

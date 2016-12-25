@@ -1,4 +1,12 @@
-mainmenu "Lsdf"
+mainmenu "MakeDoxygen"
+
+menu "Project"
+config GIT_SHA1
+	bool "enable git sha1 node id"
+	default n
+	help
+	  macro __GIT_SHA1__ get ID
+endmenu
 
 menu "library libla.so"
 config USE_LA_FUN1
