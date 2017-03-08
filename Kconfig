@@ -6,6 +6,21 @@ config GIT_SHA1
 	default n
 	help
 	  macro __GIT_SHA1__ get ID
+config USE_GCH
+	bool "Support precompile"
+	default y
+
+config PRECOMPILE_AUTOCONFIG_H
+	depends on USE_GCH
+	bool "add autoconfig.h.gch"
+	default y
+
+config PRECOMPILE_AUTOCONFIG_HPP
+	depends on USE_GCH
+	bool "add autoconfig++.h.gch"
+	default n
+
+	
 endmenu
 
 menu "library libla.so"

@@ -35,6 +35,16 @@ SHELL=/bin/bash
 export TOP_DIR = $(realpath ./)
 
 #################################################################
+# Default Output files name and directory
+OUTPUT_ELF	= download.elf
+OUTPUT_DIS	= download.dis
+OUTPUT_BIN	= download.bin
+OUTPUT_SO	= download.so
+OUTPUT_A	= download.a
+OUTPUT_DIR	= release
+MAKE_DIR	+= include doxygen
+
+#################################################################
 # load common config
 ifeq ("$(file_common)", "")
 	ifeq ($(TOP_DIR)/script/common.mk, $(wildcard $(TOP_DIR)/script/common.mk))
@@ -130,49 +140,26 @@ OBJS = 	$(patsubst %.S,%.o,\
 		$(patsubst %.c,%.o,$(SRCS-y))))
 
 #################################################################
-# Output files name and directory
-# 
+# precompile
+#
 
-ifeq ("$(OUTPUT_ELF)", "")
-	OUTPUT_ELF	= download.elf
+ifeq ("$(CONFIG_USE_GCH)", "y")
+	CFLAGS += -Winvalid-pch 
+	ifeq ("$(CONFIG_PRECOMPILE_AUTOCONFIG_H)", "y")
+		GCHS-y += include/autoconfig.h.gch 
+	endif
+	ifeq ("$(CONFIG_PRECOMPILE_AUTOCONFIG_HPP)", "y")
+		GCHS-y += include/autoconfig++.hpp.gch
+	endif
+else
+	GCHS-y=
 endif
-ifeq ("$(OUTPUT_DIS)", "")
-	OUTPUT_DIS	= download.dis
-endif
-ifeq ("$(OUTPUT_BIN)", "")
-	OUTPUT_BIN	= download.bin
-endif
-ifeq ("$(OUTPUT_SO)", "")
-	OUTPUT_SO	= download.so
-endif
-ifeq ("$(OUTPUT_A)", "")
-	OUTPUT_A	= download.a
-endif
-ifeq ("$(OUTPUT_DIR)", "")
-	OUTPUT_DIR	= release
-endif
-
-MAKE_DIR	+= include doxygen
-
-
 
 
 #################################################################
 # macro NOWTIME "yyyy-mm-dd_HH:MM:SS"
 NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 
-#################################################################
-# INCLUDE_DIR	- Where will be search *.h file
-# LFLAGS		- Linking option
-# LIB_DIR		- Where will be search *.so/*.a file
-#-Wl,-rpath=./:./lib/
-
-#when app.elf run will select *.so/a from $(PATH) -> ./ -> ./lib/
-# INCLUDE_DIR += 
-# LFLAGS	    += 
-# LIB_DIR     += 
-
-# SHA1="$(shell cat .sha1)"
 
 ifeq ("$(CONFIG_GIT_SHA1)", "y")
 	ifeq (".git/HEAD", "")
@@ -192,8 +179,8 @@ CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
 
 
 #################################################################
-GCC_G++ = gcc
-CC 	= $(CROSS_COMPILE)$(GCC_G++)
+CC 	= $(CROSS_COMPILE)gcc
+CPP	= $(CROSS_COMPILE)g++
 LD 	= $(CROSS_COMPILE)ld
 AR  = $(CROSS_COMPILE)ar
 OBJDUMP = $(CROSS_COMPILE)objdump
@@ -204,16 +191,10 @@ STRIP = $(CROSS_COMPILE)strip
 # CFLAGS		- Compile general option
 # CC_FLAGS		- Compile only for *.c file option
 # CS_FLAGS		- Compile only for *.S file option
-CFLAGS		+= 	 -Wall  -rdynamic
-ifeq ("$(GCC_G++)","gcc") # only compile gcc use -std=gnu99 option
-	CC_FLAGS    = -std=gnu99
-else
-	CC_FLAGS    = 
-endif
+# CPP_FLAGS		- Compile only for *.cpp file option
 
-
-
-CC_FLAGS   += $(CFLAGS)
+CC_FLAGS   += $(CFLAGS)  -std=gnu99
+CPP_FLAGS  += $(CFLAGS)
 CS_FLAGS   += $(CFLAGS)
 
 ifeq ("$(load_lds)","y") 
@@ -266,6 +247,7 @@ configure: init_dir mkheader
 menuconfig:mconf mkheader
 	./script/kconfig/mconf Kconfig
 	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
+	cp include/autoconfig.h include/autoconfig++.hpp
 
 mconf:
 	$(MAKE) -C script/kconfig
@@ -288,19 +270,19 @@ bin:echo-arch elf
 elf:echo-arch $(load_lds)
 
 
-load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
+load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)" 				$(NORMAL)
 	@$(CC) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OBJS) $(LIB_DIR) $(LFLAGS)
 
 # it's a bootloader bin file,user have to select *.lds file by your self
 # default file_lds = boot.lds
-load_lds-y:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
+load_lds-y:$(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
 	@$(LD) -T$(file_lds) $(OBJS) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(LFLAGS) $(LIB_DIR)  
 #################################################################
 .PHONY: mlib
-mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
+mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"				$(NORMAL)
 	@$(CC) -shared -fPIC -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"				$(NORMAL)
@@ -308,12 +290,13 @@ mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
 #################################################################
 echo-arch:
 	@echo -e $(YELLOW)"    ARCH       [$(ARCH)]"										$(NORMAL)
+
 %.o:%.c
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
-	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR)
+	@$(CC) -o $@ -c $^ $(CC_FLAGS) --include autoconfig.h -fgnu89-inline $(INCLUDE_DIR)
 %.o:%.cpp
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
-	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) 
+	@$(CPP) -o $@ -c $^ $(CPP_FLAGS) --include autoconfig++.hpp $(INCLUDE_DIR) 
 %.o:%.S
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
 	@$(CC) -o $@ -c $^ $(CS_FLAGS) $(INCLUDE_DIR)
@@ -382,7 +365,17 @@ acopy_mlib:
 	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
 	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
 
+gch:$(GCHS-y)
+	@echo -e $(YELLOW)"    precompile finish"$(NORMAL)
+rmgch:
+	@-rm -f $(GCHS-y)
 
+%.hpp.gch:%.hpp
+	@echo -e $(CYAN)"    precompile    $^"$(NORMAL)
+	@$(CPP)  -o $@ -x c++-header -c $^ $(GCHS_INCLUDE_DIR)
+%.h.gch:%.h
+	@echo -e $(CYAN)"    precompile    $^"$(NORMAL)
+	@$(CC)  -o $@ -x c-header -c $^ $(GCHS_INCLUDE_DIR)
 
 
 run:
@@ -429,6 +422,9 @@ print_env:
 	@echo CFLAGS "      " = $(CFLAGS)
 
 	@echo $(SRCS-y)
+fl:
+	@echo =========================================================
+	@echo GCHS-y "  "= $(GCHS-y)
 help:
 	@echo ======================== Makefile help ========================
 	@echo "    "configure"    "make autoconfig.h from config file default config.mk
