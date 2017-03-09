@@ -88,6 +88,7 @@ endif
 # load file list xxx/filelist.mk,SRCS-y defined in xxx/filelist.mk
 file_list =$($(DP))/filelist.mk
 file_prj  =$($(DP))/project.mk
+file_rule =$($(DP))/rule.mk
 
 # checking
 ifeq ($(file_prj), $(wildcard $(file_prj)))
@@ -420,11 +421,14 @@ print_env:
 	@echo LFLAGS "      " = $(LFLAGS)
 	@echo LIB_DIR "     " = $(LIB_DIR)
 	@echo CFLAGS "      " = $(CFLAGS)
+	@echo CC_FLAGS "      " = $(CC_FLAGS)
+	@echo CPP_FLAGS "     " = $(CPP_FLAGS)
 
 	@echo $(SRCS-y)
 fl:
 	@echo =========================================================
 	@echo GCHS-y "  "= $(GCHS-y)
+	@echo SRCS-y "  "= $(SRCS-y)
 help:
 	@echo ======================== Makefile help ========================
 	@echo "    "configure"    "make autoconfig.h from config file default config.mk
@@ -497,7 +501,7 @@ $(each-all):
 clean:$(each-clean)
 	@$(MAKE) clean -C script/kconfig  --no-print-directory
 	@$(MAKE) clean -C script/mkheader  --no-print-directory
-	@-rm .sha1
+	@-rm -if .sha1
 $(each-clean):
 	@$(MAKE) DP=$(patsubst clean-%,%,$@) aclean --no-print-directory
 	
@@ -520,6 +524,8 @@ copy:$(each-copy)
 $(each-copy):
 	@$(MAKE) DP=$(patsubst copy-%,%,$@) acopy --no-print-directory
 	
+# End rmgch sub project
 
-
-# End all sub project
+ifeq ($(file_rule), $(wildcard $(file_rule)))
+include $(file_rule)
+endif

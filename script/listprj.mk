@@ -12,6 +12,12 @@
 
 	pi3=script/prj_libb
 		pi3_arg=mlib
+	pi4=script/prj_qt
+		pi4_arg=elf
+	pi5=script/prj_cpp_c
+		pi5_arg=elf
+	pi6=script/prj_moc
+		pi6_arg=elf
 
 
 
