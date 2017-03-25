@@ -241,7 +241,15 @@ configure: init_dir mkheader
 menuconfig:mconf mkheader
 	./script/kconfig/mconf Kconfig
 	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
-
+cpplintconfig:mconf
+	@-mv .config .config_bak
+	@-mv .cpplint_config .config
+	./script/kconfig/mconf script/codestyle/cpplint_Kconfig
+	@echo create .cpplint_config
+	@-mv .config .cpplint_config
+	@echo create .CPPLINT.cfg
+	@./script/mkcpplint.sh > CPPLINT.cfg
+	@-mv .config_bak .config 
 mconf:
 	$(MAKE) -C script/kconfig
 

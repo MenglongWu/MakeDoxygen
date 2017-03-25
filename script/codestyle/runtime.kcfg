@@ -1,0 +1,164 @@
+menu "runtime"
+
+config runtime_arrays
+	bool "runtime/arrays"
+	help
+	TODO
+config no_runtime_arrays
+	bool "unuse"
+	depends on runtime_arrays
+
+
+
+config runtime_casting
+	bool "runtime/casting"
+	help
+	TODO
+config no_runtime_casting
+	bool "unuse"
+	depends on runtime_casting
+
+
+
+config runtime_explicit
+	bool "runtime/explicit"
+	help
+	TODO
+config no_runtime_explicit
+	bool "unuse"
+	depends on runtime_explicit
+
+
+
+config runtime_int
+	bool "runtime/int"
+	default y
+	help
+	TODO
+config no_runtime_int
+	bool "unuse"
+	default y
+	depends on runtime_int
+
+
+
+config runtime_init
+	bool "runtime/init"
+	help
+	TODO
+config no_runtime_init
+	bool "unuse"
+	depends on runtime_init
+
+
+
+config runtime_invalid_increment
+	bool "runtime/invalid_increment"
+	help
+	TODO
+config no_runtime_invalid_increment
+	bool "unuse"
+	depends on runtime_invalid_increment
+
+
+
+config runtime_member_string_references
+	bool "runtime/member_string_references"
+	help
+	TODO
+config no_runtime_member_string_references
+	bool "unuse"
+	depends on runtime_member_string_references
+
+
+
+config runtime_memset
+	bool "runtime/memset"
+	help
+	TODO
+config no_runtime_memset
+	bool "unuse"
+	depends on runtime_memset
+
+
+
+config runtime_indentation_namespace
+	bool "runtime/indentation_namespace"
+	help
+	TODO
+config no_runtime_indentation_namespace
+	bool "unuse"
+	depends on runtime_indentation_namespace
+
+
+
+config runtime_operator
+	bool "runtime/operator"
+	help
+	TODO
+config no_runtime_operator
+	bool "unuse"
+	depends on runtime_operator
+
+
+
+config runtime_printf
+	bool "runtime/printf"
+	help
+	TODO
+config no_runtime_printf
+	bool "unuse"
+	depends on runtime_printf
+
+
+
+config runtime_printf_format
+	bool "runtime/printf_format"
+	help
+	TODO
+config no_runtime_printf_format
+	bool "unuse"
+	depends on runtime_printf_format
+
+
+
+config runtime_references
+	bool "runtime/references"
+	help
+	TODO
+config no_runtime_references
+	bool "unuse"
+	depends on runtime_references
+
+
+
+config runtime_string
+	bool "runtime/string"
+	help
+	TODO
+config no_runtime_string
+	bool "unuse"
+	depends on runtime_string
+
+
+
+config runtime_threadsafe_fn
+	bool "runtime/threadsafe_fn"
+	help
+	TODO
+config no_runtime_threadsafe_fn
+	bool "unuse"
+	depends on runtime_threadsafe_fn
+
+
+
+config runtime_vlog
+	bool "runtime/vlog"
+	help
+	TODO
+config no_runtime_vlog
+	bool "unuse"
+	depends on runtime_vlog
+
+
+endmenu

@@ -1,0 +1,8 @@
+mainmenu "cpplint"
+
+source ./script/codestyle/build.kcfg
+source ./script/codestyle/legal.kcfg
+source ./script/codestyle/readability.kcfg
+source ./script/codestyle/runtime.kcfg
+source ./script/codestyle/whitespace.kcfg
+
