@@ -246,7 +246,9 @@ configure: init_dir mkheader
 	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 menuconfig:mconf mkheader
+	./script/listprj.py kconfig
 	./script/kconfig/mconf Kconfig
+	./script/listprj.py defprj
 	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
 	cp include/autoconfig.h include/autoconfig++.hpp
 
