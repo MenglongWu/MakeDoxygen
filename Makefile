@@ -218,7 +218,7 @@ WHITE = "\e[37;1m"
 
 #################################################################
 # def target beyond DP,ARG
-def: .sha1 $(ARG)
+def: .sha1 $(ARG) $(PRJS-y)
 
 # do something for all target
 include script/allprj.mk
@@ -249,8 +249,13 @@ menuconfig:mconf mkheader
 	./script/listprj.py kconfig
 	./script/kconfig/mconf Kconfig
 	./script/listprj.py defprj
+
+	@echo build autoconfig.h autoconfig.hpp
 	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
-	cp include/autoconfig.h include/autoconfig++.hpp
+	@cp include/autoconfig.h include/autoconfig++.hpp
+
+	@echo rm "*.gch"
+	@find -name "*.gch" | xargs rm -f
 
 mconf:
 	$(MAKE) -C script/kconfig
@@ -454,8 +459,8 @@ help:
 	@echo "    "SRCS-y"       "select file be compiled
 	@echo "                   "SRCS-y += src/main.c src/foo.c
 	@echo "                   "SRCS-\(CONFIG_MODULE\) += mod/module.c
-	@echo "    "PRJS"         "sub project list
-	@echo "                   "PRJS += pix piy piz
+	@echo "    "PRJS-y"         "sub project list
+	@echo "                   "PRJS-y += pix piy piz
 	@echo "                   "compile 3 project one by one
 
 # user define
@@ -486,15 +491,19 @@ splint:
 #################################################################
 # all sub project
 
-each-all       := $(foreach n,$(PRJS),all-$(n))
-each-clean     := $(foreach n,$(PRJS),clean-$(n))  clean-mconf
-each-distclean := $(foreach n,$(PRJS),distclean-$(n))
-each-strip     := $(foreach n,$(PRJS),strip-$(n))
-each-copy      := $(foreach n,$(PRJS),copy-$(n))
+each-all       := $(foreach n,$(PRJS-y),all-$(n))
+each-clean     := $(foreach n,$(PRJS-y),clean-$(n))  clean-mconf
+each-distclean := $(foreach n,$(PRJS-y),distclean-$(n))
+each-strip     := $(foreach n,$(PRJS-y),strip-$(n))
+each-copy      := $(foreach n,$(PRJS-y),copy-$(n))
 
 
 .PHONY:all
-all:$(each-all)
+all:$(PRJS-y)
+
+pi%:
+	$(MAKE) DP=$@ --no-print-directory
+# $(each-all)
 $(each-all):
 	$(MAKE) DP=$(patsubst all-%,%,$@) --no-print-directory
 
