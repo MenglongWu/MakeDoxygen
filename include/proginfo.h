@@ -52,5 +52,5 @@ extern const struct gtype##_id __mod_##gtype##_table		\
 #define PROG_BUILD MODULE_BUILD
 #define PROG_DEPEND MODULE_DEPEND
 #define PROG_PROJECT MODULE_PROJECT
-
+#define PROG_GITSHA1(_git_sha1) MODULE_INFO(git,_git_sha1)
 #endif

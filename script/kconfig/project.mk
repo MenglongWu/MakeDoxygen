@@ -7,11 +7,6 @@ PRJ_SUBLEVEL   = 0
 
 # default download.elf,download.dis,download.bin
 OUTPUT_ELF	= mconf
-OUTPUT_DIS	= 
-OUTPUT_BIN	= 
-OUTPUT_SO 	= 
-OUTPUT_A	= 
-OUTPUT_DIR 	= 
 
 
 
