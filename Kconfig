@@ -1,6 +1,9 @@
 mainmenu "MakeDoxygen"
 
 menu "Project"
+
+source script/listprj.kcfg
+
 config GIT_SHA1
 	bool "enable git sha1 node id"
 	default n
@@ -19,61 +22,26 @@ config PRECOMPILE_AUTOCONFIG_HPP
 	depends on USE_GCH
 	bool "add autoconfig++.h.gch"
 	default n
-
 	
 endmenu
 
-menu "library libla.so"
-config USE_LA_FUN1
-	bool "libla"
-	default y
+
+#
+# only example
+# 
+source script/prj_liba/Kconfig
+source script/prj_libb/Kconfig
+source script/qt-common/Kconfig
+#
+# End only example
+# 
 
 
-config USE_LA_PART2
-	bool "la part2"
-
-config USE_LA_FUN3
-	bool "la fun3"
 
 
-config LA_FUN1_STR
-	string "libla fun1 string" 
-	default "1. I'm fun1() from libla.so"
-	default "2. I'm fun1() from libla.so"
-	default "3. I'm fun1() from libla.so"
 
-config LA_FUN2_STR
-	string "libla fun2 string" 
-	option la_fun2_list
-	default "1. I'm fun2() from libla.so"
+#
+# TODO yours
+# 
 
-endmenu
-
-
-menu "library liblb.so"
-config USE_LB_FUN1
-	bool "liblb"
-	default y
-
-config USE_LB_PART2
-	bool "lb part2"
-
-config USE_LB_FUN3
-	bool "lb fun3"		
-
-config LB_FUN1_STR
-	string "liblb fun1 string" 
-	option lb_fun1_list
-	default "1. I'm fun1() from liblb.so"
-	default "2. I'm fun1() from liblb.so"
-	default "3. I'm fun1() from liblb.so"
-		
-config LB_FUN2_STR
-	string "liblb fun2 string" 
-	option lb_fun2_list
-	default "1. I'm fun2() from liblb.so"
-	default "2. I'm fun2() from liblb.so"
-	default "3. I'm fun2() from liblb.so"
-
-endmenu
-
+# source script/<your project>/Kconfig

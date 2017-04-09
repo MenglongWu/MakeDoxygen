@@ -1,0 +1,25 @@
+menu "library libla.so"
+config USE_LA_FUN1
+	bool "libla"
+	default y
+
+
+config USE_LA_PART2
+	bool "la part2"
+
+config USE_LA_FUN3
+	bool "la fun3"
+
+
+config LA_FUN1_STR
+	string "libla fun1 string" 
+	default "1. I'm fun1() from libla.so"
+	default "2. I'm fun1() from libla.so"
+	default "3. I'm fun1() from libla.so"
+
+config LA_FUN2_STR
+	string "libla fun2 string" 
+	option la_fun2_list
+	default "1. I'm fun2() from libla.so"
+
+endmenu

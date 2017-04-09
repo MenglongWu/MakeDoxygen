@@ -1,0 +1,27 @@
+menu "library liblb.so"
+config USE_LB_FUN1
+	bool "liblb"
+	default y
+
+config USE_LB_PART2
+	bool "lb part2"
+
+config USE_LB_FUN3
+	bool "lb fun3"		
+
+config LB_FUN1_STR
+	string "liblb fun1 string" 
+	option lb_fun1_list
+	default "1. I'm fun1() from liblb.so"
+	default "2. I'm fun1() from liblb.so"
+	default "3. I'm fun1() from liblb.so"
+		
+config LB_FUN2_STR
+	string "liblb fun2 string" 
+	option lb_fun2_list
+	default "1. I'm fun2() from liblb.so"
+	default "2. I'm fun2() from liblb.so"
+	default "3. I'm fun2() from liblb.so"
+
+endmenu
+

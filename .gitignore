@@ -1,6 +1,8 @@
 *.o
 *.sublime-project
 *.sublime-workspace
+Thumbs.db
+
 .tags_sorted_by_file
 .tags
 *.*.o.cmd
@@ -12,3 +14,11 @@ script/kconfig/*.o
 script/kconfig/mconf
 script/mkheader/*.o
 script/mkheader/mkheader
+script/listprj.kcfg
+
+
+include/autoconfig++.hpp
+include/autoconfig.h
+.sha1
+*.moc.cpp
+*.gch
