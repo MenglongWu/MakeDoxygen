@@ -257,6 +257,15 @@ menuconfig:mconf mkheader
 	@echo rm "*.gch"
 	@find -name "*.gch" | xargs rm -f
 
+cpplintconfig:mconf
+	@-mv .config .config_bak
+	@-mv .cpplint_config .config
+	./script/kconfig/mconf script/codestyle/cpplint_Kconfig
+	@echo create .cpplint_config
+	@-mv .config .cpplint_config
+	@echo create .CPPLINT.cfg
+	@./script/mkcpplint.sh > CPPLINT.cfg
+	@-mv .config_bak .config 
 mconf:
 	$(MAKE) -C script/kconfig
 

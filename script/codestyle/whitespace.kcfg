@@ -1,0 +1,206 @@
+menu "whitespace"
+
+config whitespace_blank_line
+	bool "whitespace/blank_line"
+	help 
+
+	{
+		return hash;
+
+	}
+	--------------
+	{
+		return hash;
+	}
+
+
+config no_whitespace_blank_line
+	bool "unuse"
+	depends on whitespace_blank_line
+
+
+config whitespace_braces
+	bool "whitespace/braces"
+	default y
+	help
+	todo
+
+config no_whitespace_braces
+	bool "unuse"
+	default y
+	depends on whitespace_braces
+
+
+config whitespace_comma
+	bool "whitespace/comma"
+	help
+	todo
+
+config no_whitespace_comma
+	bool "unuse"
+	depends on whitespace_comma
+
+
+config whitespace_comments
+	bool "whitespace/comments"
+	help
+	todo
+
+config no_whitespace_comments
+	bool "unuse"
+	depends on whitespace_comments
+
+
+config whitespace_empty_conditional_body
+	bool "whitespace/empty_conditional_body"
+	help
+	if (1);
+	---
+	if (1)
+		a=1;
+
+config no_whitespace_empty_conditional_body
+	bool "unuse"
+	depends on whitespace_empty_conditional_body
+
+
+config whitespace_empty_if_body
+	bool "whitespace/empty_if_body"
+	help
+	todo
+
+config no_whitespace_empty_if_body
+	bool "unuse"
+	depends on whitespace_empty_if_body
+
+
+config whitespace_empty_loop_body
+	bool "whitespace/empty_loop_body"
+	help
+	todo
+
+config no_whitespace_empty_loop_body
+	bool "unuse"
+	depends on whitespace_empty_loop_body
+
+
+config whitespace_end_of_line
+	bool "whitespace/end_of_line"
+	help
+	todo
+
+config no_whitespace_end_of_line
+	bool "unuse"
+	depends on whitespace_end_of_line
+
+
+config whitespace_ending_newline
+	bool "whitespace/ending_newline"
+	help
+	todo
+
+config no_whitespace_ending_newline
+	bool "unuse"
+	depends on whitespace_ending_newline
+
+
+config whitespace_forcolon
+	bool "whitespace/forcolon"
+	help
+	todo
+
+config no_whitespace_forcolon
+	bool "unuse"
+	depends on whitespace_forcolon
+
+
+config whitespace_indent
+	bool "whitespace/indent"
+	help
+	todo
+
+config no_whitespace_indent
+	bool "unuse"
+	depends on whitespace_indent
+
+
+config whitespace_line_length
+	bool "whitespace/line_length"
+	help
+	todo
+
+config no_whitespace_line_length
+	bool "unuse"
+	depends on whitespace_line_length
+
+
+config whitespace_newline
+	bool "whitespace/newline"
+	help
+	todo
+
+config no_whitespace_newline
+	bool "unuse"
+	depends on whitespace_newline
+
+
+config whitespace_operators
+	bool "whitespace/operators"
+	help
+	todo
+
+config no_whitespace_operators
+	bool "unuse"
+	depends on whitespace_operators
+
+
+config whitespace_parens
+	bool "whitespace/parens"
+	help
+	for ( i = 0; i < 2; i++);
+	---
+	for (i = 0; i < 2; i++);
+
+config no_whitespace_parens
+	bool "unuse"
+	depends on whitespace_parens
+
+
+config whitespace_semicolon
+	bool "whitespace/semicolon"
+	help 
+	if ( 1);
+	---
+	if (1);
+
+config no_whitespace_semicolon
+	bool "unuse"
+	depends on whitespace_semicolon
+
+
+config whitespace_tab
+	bool "whitespace/tab"
+	default y
+	help
+	<tab>  int a; [N]
+	---
+	<space>int a; [Y]
+
+config no_whitespace_tab
+	bool "unuse"
+	default y
+	depends on whitespace_tab
+
+
+config whitespace_todo
+	bool "whitespace/todo"
+	help
+	todo
+
+config no_whitespace_todo
+	bool "unuse"
+	depends on whitespace_todo
+
+
+
+endmenu

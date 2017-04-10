@@ -1,0 +1,187 @@
+menu "build"
+
+config build_class
+	bool "build/class"
+	help
+	todo
+
+config on_build_class
+	bool "unuse"
+	depends on build_class
+
+
+config build_c11
+	bool "build/c11"
+	help
+	todo
+
+config on_build_c11
+	bool "unuse"
+	depends on build_c11
+
+
+config build_c14
+	bool "build/c14"
+	help
+	todo
+
+config on_build_c14
+	bool "unuse"
+	depends on build_c14
+
+
+config build_ctr1
+	bool "build/ctr1"
+	help
+	todo
+
+config on_build_ctr1
+	bool "unuse"
+	depends on build_ctr1
+
+
+config build_deprecated
+	bool "build/deprecated"
+	help
+	todo
+
+config on_build_deprecated
+	bool "unuse"
+	depends on build_deprecated
+
+
+config build_endif_comment
+	bool "build/endif_comment"
+	help
+	todo
+
+config on_build_endif_comment
+	bool "unuse"
+	depends on build_endif_comment
+
+
+config build_explicit_make_pair
+	bool "build/explicit_make_pair"
+	help
+	todo
+
+config on_build_explicit_make_pair
+	bool "unuse"
+	depends on build_explicit_make_pair
+
+
+config build_forward_decl
+	bool "build/forward_decl"
+	help
+	todo
+
+config on_build_forward_decl
+	bool "unuse"
+	depends on build_forward_decl
+
+
+config build_header_guard
+	bool "build/header_guard"
+	help
+	todo
+
+config on_build_header_guard
+	bool "unuse"
+	depends on build_header_guard
+
+
+config build_include
+	bool "build/include"
+	help
+	todo
+
+config on_build_include
+	bool "unuse"
+	depends on build_include
+
+
+config build_include_subdir
+	bool "build/include_subdir"
+	help
+	todo
+
+config on_build_include_subdir
+	bool "unuse"
+	depends on build_include_subdir
+
+
+config build_include_alpha
+	bool "build/include_alpha"
+	help
+	todo
+
+config on_build_include_alpha
+	bool "unuse"
+	depends on build_include_alpha
+
+
+config build_include_order
+	bool "build/include_order"
+	help
+	todo
+
+	help
+	#include <abc.h>
+	---------
+	#inc
+	lude <abc.h> // ignore
+config on_build_include_order
+	bool "unuse"
+	depends on build_include_order
+
+config build_include_what_you_use
+	bool "build/include_what_you_use"
+	help
+	todo
+
+config on_build_include_what_you_use
+	bool "unuse"
+	depends on build_include_what_you_use
+
+
+config build_namespaces_literals
+	bool "build/namespaces_literals"
+	help
+	todo
+
+config on_build_namespaces_literals
+	bool "unuse"
+	depends on build_namespaces_literals
+
+
+config build_namespaces
+	bool "build/namespaces"
+	help
+	todo
+
+config on_build_namespaces
+	bool "unuse"
+	depends on build_namespaces
+
+
+config build_printf_format
+	bool "build/printf_format"
+	help
+	todo
+
+config on_build_printf_format
+	bool "unuse"
+	depends on build_printf_format
+
+
+config build_storage_class
+	bool "build/storage_class"
+	help
+	todo
+
+config on_build_storage_class
+	bool "unuse"
+	depends on build_storage_class
+
+
+endmenu

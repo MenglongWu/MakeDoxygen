@@ -1,0 +1,152 @@
+menu "readability"
+
+config readability_alt_tokens
+	bool "readability/alt_tokens"
+	help 
+	TODO
+config no_readability_alt_tokens
+	bool "unuse"
+	depends on readability_alt_tokens
+
+
+
+config readability_braces
+	bool "readability/braces"
+	help 
+	TODO
+config no_readability_braces
+	bool "unuse"
+	depends on readability_braces
+
+
+
+config readability_casting
+	bool "readability/casting"
+	help 
+	TODO
+config no_readability_casting
+	bool "unuse"
+	depends on readability_casting
+
+
+
+config readability_check
+	bool "readability/check"
+	help 
+	TODO
+config no_readability_check
+	bool "unuse"
+	depends on readability_check
+
+
+
+config readability_constructors
+	bool "readability/constructors"
+	help 
+	TODO
+config no_readability_constructors
+	bool "unuse"
+	depends on readability_constructors
+
+
+
+config readability_fn_size
+	bool "readability/fn_size"
+	help 
+	TODO
+config no_readability_fn_size
+	bool "unuse"
+	depends on readability_fn_size
+
+
+
+config readability_inheritance
+	bool "readability/inheritance"
+	help 
+	TODO
+config no_readability_inheritance
+	bool "unuse"
+	depends on readability_inheritance
+
+
+
+config readability_multiline_comment
+	bool "readability/multiline_comment"
+	help 
+	TODO
+config no_readability_multiline_comment
+	bool "unuse"
+	depends on readability_multiline_comment
+
+
+
+config readability_multiline_string
+	bool "readability/multiline_string"
+	help 
+	TODO
+config no_readability_multiline_string
+	bool "unuse"
+	depends on readability_multiline_string
+
+
+
+config readability_namespace
+	bool "readability/namespace"
+	help 
+	TODO
+config no_readability_namespace
+	bool "unuse"
+	depends on readability_namespace
+
+
+
+config readability_nolint
+	bool "readability/nolint"
+	help 
+	TODO
+config no_readability_nolint
+	bool "unuse"
+	depends on readability_nolint
+
+
+
+config readability_nul
+	bool "readability/nul"
+	help 
+	TODO
+config no_readability_nul
+	bool "unuse"
+	depends on readability_nul
+
+
+
+config readability_strings
+	bool "readability/strings"
+	help 
+	TODO
+config no_readability_strings
+	bool "unuse"
+	depends on readability_strings
+
+
+
+config readability_todo
+	bool "readability/todo"
+	help 
+	TODO
+config no_readability_todo
+	bool "unuse"
+	depends on readability_todo
+
+
+
+config readability_utf8
+	bool "readability/utf8"
+	help 
+	TODO
+config no_readability_utf8
+	bool "unuse"
+	depends on readability_utf8
+
+
+endmenu

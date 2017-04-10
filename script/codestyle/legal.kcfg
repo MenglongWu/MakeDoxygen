@@ -1,0 +1,10 @@
+menu "legal"
+
+config legal_copyright
+	bool "legal/copyright"
+	help
+	TODO
+config no_runtime_arrays
+	bool "unuse"
+	depends on legal_copyright
+endmenu
