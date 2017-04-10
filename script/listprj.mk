@@ -18,9 +18,11 @@
 		pi5_arg=elf
 	pi6=script/prj_moc
 		pi6_arg=elf
+	pi7=script/prj_printl
+		pi7_arg=elf
 
 
 
 
 # default project item
-export DP=pi1
+export DP=pi7
