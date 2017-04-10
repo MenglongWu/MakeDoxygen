@@ -1,0 +1,5 @@
+menu "Qt common"
+config QT
+	bool "enable QT project demo"
+endmenu
+
