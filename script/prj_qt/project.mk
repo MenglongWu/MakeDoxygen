@@ -17,8 +17,8 @@ OUTPUT_ELF	= qt-hello.elf
 OUTPUT_DIR = release
 
 
-INCLUDE_DIR	+= $(GCHS_INCLUDE_DIR)
-LFLAGS		+= 
+INCLUDE_DIR	+= -I./src -I./src/qt $(GCHS_INCLUDE_DIR)
+LFLAGS		+= -lla
 LIB_DIR 	+= 
 CFLAGS  	+=
 

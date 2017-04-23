@@ -4,7 +4,7 @@ menu "Project"
 
 source script/listprj.kcfg
 
-menu "Print style"
+menu "Print level"
 config USE_PRINTL
 	bool "use printl"
 config UNUSE_PRINTW
@@ -17,14 +17,11 @@ config UNUSE_PRINTE
 
 config UNUSE_DBGM
 	depends on USE_PRINTL
-	bool "unuse DBGM"
+	bool "unuse dbgm"
 
 config NDEBUG
-	depends on USE_PRINTL
-	bool "unuse DBG"
+	bool "unuse assert,dbg (-DNDEBUG)"
 
-config NDEBUG
-	bool "unuse assert"
 endmenu
 
 

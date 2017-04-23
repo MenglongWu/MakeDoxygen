@@ -15,7 +15,7 @@ script/kconfig/mconf
 script/mkheader/*.o
 script/mkheader/mkheader
 script/listprj.kcfg
-
+script/kconfig/mconf
 
 include/autoconfig++.hpp
 include/autoconfig.h

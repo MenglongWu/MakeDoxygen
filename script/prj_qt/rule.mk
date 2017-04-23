@@ -1,5 +1,15 @@
 
-MOC=/opt/qt-4.7.3/bin/moc
+MOC_DIR=/opt/qt-4.7.3/bin/
+
+# ifeq ("$(ARCH)", "arm926")
+# 	MOC_DIR=
+# endif
+# ifeq ("$(ARCH)", "win32")
+#	MOC_DIR=
+# endif
+
+MOC= $(MOC_DIR)moc
+
 
 
 moc:$(MOCS-y)

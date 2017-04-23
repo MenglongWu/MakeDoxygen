@@ -1,3 +1,10 @@
+/**
+ * Copyright 2015-2017 MenglongWoo@aliyun.com
+ * @file	src/qt/dlg-net.cpp
+ * @brief	example for MakeDoxygen
+ *		net configure
+*/
+
 #include "dlg-net.h"
 
 DlgNet::DlgNet(QWidget *parent)
@@ -8,16 +15,15 @@ DlgNet::DlgNet(QWidget *parent)
 
 	integerLabel = new QLabel;
 	integerLabel->setFrameStyle(frameStyle);
-	
+
 	label_ip = new QLabel;
-	label_ip->setFrameStyle(frameStyle);	
+	label_ip->setFrameStyle(frameStyle);
 	label_ip->setText(QString("ip"));
 
 	label_mask = new QLabel;
-	label_mask->setFrameStyle(frameStyle);	
+	label_mask->setFrameStyle(frameStyle);
 	label_mask->setText(QString("mask"));
-	
-	
+
 	label_gw = new QLabel;
 	label_gw->setFrameStyle(frameStyle);
 	label_gw->setText(QString("gw"));
@@ -33,10 +39,8 @@ DlgNet::DlgNet(QWidget *parent)
 	edit_mask = new QLineEdit;
 	edit_gw = new QLineEdit;
 	edit_dns = new QLineEdit;
-	
+
 	QPushButton *btn_ok =    new QPushButton("OK");
-
-
 
 
 
@@ -65,6 +69,7 @@ DlgNet::DlgNet(QWidget *parent)
 
 void DlgNet::set_net()
 {
+	// Do nothing
 	exit(1);
 }
 

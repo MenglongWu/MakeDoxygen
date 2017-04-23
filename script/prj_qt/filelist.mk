@@ -1,6 +1,6 @@
 
-SRCS-y += src/qt-hello.cpp
+SRCS-y += src/qt/qt-hello.cpp
 
-GCHS-y += src/qt.hpp.gch  
+GCHS-y += src/qt/qt.hpp.gch  
 
 

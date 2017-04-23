@@ -160,6 +160,13 @@ else
 	GCHS-y=
 endif
 
+#################################################################
+# release version, ignore assert()
+#
+ifeq ("$(CONFIG_NDEBUG)", "y")
+	CFLAGS += -DNDEBUG
+endif
+
 
 #################################################################
 # macro NOWTIME "yyyy-mm-dd_HH:MM:SS"
@@ -175,7 +182,7 @@ ifeq ("$(CONFIG_GIT_SHA1)", "y")
 	SHA1="$(shell cat .sha1)"
 endif
 
-CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
+CFLAGS      += -DARCH=\"$(ARCH)\"		\
 		-DPRJ_VERSION=\"$(PRJ_VERSION)\"	\
 		-DPRJ_PATCHLEVEL=\"$(PRJ_PATCHLEVEL)\"	\
 		-DPRJ_SUBLEVEL=\"$(PRJ_SUBLEVEL)\"	\
@@ -254,7 +261,7 @@ menuconfig:mconf mkheader
 	./script/kconfig/mconf Kconfig
 	./script/listprj.py defprj
 
-	@echo build autoconfig.h autoconfig.hpp
+	@echo build autoconfig.h autoconfig++.hpp
 	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
 	@cp include/autoconfig.h include/autoconfig++.hpp
 
