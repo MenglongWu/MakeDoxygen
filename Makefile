@@ -115,6 +115,10 @@ $(warning  "SRCS-y is empty")
 	exit
 endif
 
+ifeq ("$(CONFIG_USE_PRINTL)", "y")
+	SRCS-y += include/printl_common.c
+	# exit
+endif
 
 
 

@@ -4,6 +4,30 @@ menu "Project"
 
 source script/listprj.kcfg
 
+menu "Print style"
+config USE_PRINTL
+	bool "use printl"
+config UNUSE_PRINTW
+	depends on USE_PRINTL
+	bool "unuse PRINTW"
+
+config UNUSE_PRINTE
+	depends on USE_PRINTL
+	bool "unuse PRINTE"
+
+config UNUSE_DBGM
+	depends on USE_PRINTL
+	bool "unuse DBGM"
+
+config NDEBUG
+	depends on USE_PRINTL
+	bool "unuse DBG"
+
+config NDEBUG
+	bool "unuse assert"
+endmenu
+
+
 config GIT_SHA1
 	bool "enable git sha1 node id"
 	default n
@@ -22,7 +46,10 @@ config PRECOMPILE_AUTOCONFIG_HPP
 	depends on USE_GCH
 	bool "add autoconfig++.h.gch"
 	default n
-	
+
+
+
+
 endmenu
 
 
