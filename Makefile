@@ -20,8 +20,29 @@
 #	- script/listprj.mk
 #	- script/default/project.mk
 #	- script/default/listprj.mk
+# - 2016-12-25,Menglong Wu,MenglongWoo@aliyun.com
+#
+# V1.1
+# - 2016-6-30,Menglong Wu
+#	- script/kconfig
+#	- includeproginfo.h
+#
+# V1.2
+# - 2016-12-25,Menglong Wu
+#	- script/gitsha1.sh
+
 SHELL=/bin/bash
 export TOP_DIR = $(realpath ./)
+
+#################################################################
+# Default Output files name and directory
+OUTPUT_ELF	= download.elf
+OUTPUT_DIS	= download.dis
+OUTPUT_BIN	= download.bin
+OUTPUT_SO	= download.so
+OUTPUT_A	= download.a
+OUTPUT_DIR	= release
+MAKE_DIR	+= include doxygen
 
 #################################################################
 # load common config
@@ -47,7 +68,6 @@ else
 	include $(file_config)
 endif
 
-
 #################################################################
 # load all project items
 # DP,ARG defined in listprj.mk
@@ -68,6 +88,7 @@ endif
 # load file list xxx/filelist.mk,SRCS-y defined in xxx/filelist.mk
 file_list =$($(DP))/filelist.mk
 file_prj  =$($(DP))/project.mk
+file_rule =$($(DP))/rule.mk
 
 # checking
 ifeq ($(file_prj), $(wildcard $(file_prj)))
@@ -94,6 +115,10 @@ $(warning  "SRCS-y is empty")
 	exit
 endif
 
+ifeq ("$(CONFIG_USE_PRINTL)", "y")
+	SRCS-y += include/printl_common.c
+	# exit
+endif
 
 
 
@@ -120,57 +145,54 @@ OBJS = 	$(patsubst %.S,%.o,\
 		$(patsubst %.c,%.o,$(SRCS-y))))
 
 #################################################################
-# Output files name and directory
-# 
+# precompile
+#
 
-ifeq ("$(OUTPUT_ELF)", "")
-	OUTPUT_ELF	= download.elf
-endif
-ifeq ("$(OUTPUT_DIS)", "")
-	OUTPUT_DIS	= download.dis
-endif
-ifeq ("$(OUTPUT_BIN)", "")
-	OUTPUT_BIN	= download.bin
-endif
-ifeq ("$(OUTPUT_SO)", "")
-	OUTPUT_SO	= download.so
-endif
-ifeq ("$(OUTPUT_A)", "")
-	OUTPUT_A	= download.a
-endif
-ifeq ("$(OUTPUT_DIR)", "")
-	OUTPUT_DIR	= release
+ifeq ("$(CONFIG_USE_GCH)", "y")
+	CFLAGS += -Winvalid-pch 
+	ifeq ("$(CONFIG_PRECOMPILE_AUTOCONFIG_H)", "y")
+		GCHS-y += include/autoconfig.h.gch 
+	endif
+	ifeq ("$(CONFIG_PRECOMPILE_AUTOCONFIG_HPP)", "y")
+		GCHS-y += include/autoconfig++.hpp.gch
+	endif
+else
+	GCHS-y=
 endif
 
-MAKE_DIR	+= include doxygen
-
-
+#################################################################
+# release version, ignore assert()
+#
+ifeq ("$(CONFIG_NDEBUG)", "y")
+	CFLAGS += -DNDEBUG
+endif
 
 
 #################################################################
 # macro NOWTIME "yyyy-mm-dd_HH:MM:SS"
 NOWTIME="$(shell date "+%Y-%m-%d_%H:%M:%S")"
 
-#################################################################
-# INCLUDE_DIR	- Where will be search *.h file
-# LFLAGS		- Linking option
-# LIB_DIR		- Where will be search *.so/*.a file
-#-Wl,-rpath=./:./lib/
 
-#when app.elf run will select *.so/a from $(PATH) -> ./ -> ./lib/
-# INCLUDE_DIR += 
-# LFLAGS	    += 
-# LIB_DIR     += 
-CFLAGS      += -DBUILD_DATE=\"$(NOWTIME)\"		\
+ifeq ("$(CONFIG_GIT_SHA1)", "y")
+	ifeq (".git/HEAD", "")
+	else
+		sha1_dep=$(shell ./script/sha1dep.sh)
+
+	endif
+	SHA1="$(shell cat .sha1)"
+endif
+
+CFLAGS      += -DARCH=\"$(ARCH)\"		\
 		-DPRJ_VERSION=\"$(PRJ_VERSION)\"	\
 		-DPRJ_PATCHLEVEL=\"$(PRJ_PATCHLEVEL)\"	\
 		-DPRJ_SUBLEVEL=\"$(PRJ_SUBLEVEL)\"	\
-		-DPRJ_NAME=\"$(PRJ_NAME)\"
+		-DPRJ_NAME=\"$(PRJ_NAME)\" \
+		-D__GIT_SHA1__=\"$(SHA1)\"	
 
 
 #################################################################
-GCC_G++ = gcc
-CC 	= $(CROSS_COMPILE)$(GCC_G++)
+CC 	= $(CROSS_COMPILE)gcc
+CPP	= $(CROSS_COMPILE)g++
 LD 	= $(CROSS_COMPILE)ld
 AR  = $(CROSS_COMPILE)ar
 OBJDUMP = $(CROSS_COMPILE)objdump
@@ -181,16 +203,10 @@ STRIP = $(CROSS_COMPILE)strip
 # CFLAGS		- Compile general option
 # CC_FLAGS		- Compile only for *.c file option
 # CS_FLAGS		- Compile only for *.S file option
-CFLAGS		+= 	 -Wall  -rdynamic
-ifeq ("$(GCC_G++)","gcc") # only compile gcc use -std=gnu99 option
-	CC_FLAGS    = -std=gnu99
-else
-	CC_FLAGS    = 
-endif
+# CPP_FLAGS		- Compile only for *.cpp file option
 
-
-
-CC_FLAGS   += $(CFLAGS)
+CC_FLAGS   += $(CFLAGS)  -std=gnu99
+CPP_FLAGS  += $(CFLAGS)
 CS_FLAGS   += $(CFLAGS)
 
 ifeq ("$(load_lds)","y") 
@@ -213,10 +229,12 @@ WHITE = "\e[37;1m"
 
 #################################################################
 # def target beyond DP,ARG
-def:$(ARG)
+def: .sha1 $(ARG) $(PRJS-y)
 
 # do something for all target
 include script/allprj.mk
+.sha1:$(sha1_dep)
+	@echo "$(shell ./script/gitsha1.sh)" > .sha1
 
 se:
 	$(MAKE) -C ./ 2>&1 | grep error --color=auto -A 3
@@ -239,9 +257,26 @@ configure: init_dir mkheader
 	@mkheader $(file_config) include/autoconfig.h $(PRJ_NAME)
 
 menuconfig:mconf mkheader
+	./script/listprj.py kconfig
 	./script/kconfig/mconf Kconfig
-	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
+	./script/listprj.py defprj
 
+	@echo build autoconfig.h autoconfig++.hpp
+	./script/mkheader/mkheader .config include/autoconfig.h $(PRJ_NAME)
+	@cp include/autoconfig.h include/autoconfig++.hpp
+
+	@echo rm "*.gch"
+	@find -name "*.gch" | xargs rm -f
+
+cpplintconfig:mconf
+	@-mv .config .config_bak
+	@-mv .cpplint_config .config
+	./script/kconfig/mconf script/codestyle/cpplint_Kconfig
+	@echo create .cpplint_config
+	@-mv .config .cpplint_config
+	@echo create .CPPLINT.cfg
+	@./script/mkcpplint.sh > CPPLINT.cfg
+	@-mv .config_bak .config 
 mconf:
 	$(MAKE) -C script/kconfig
 
@@ -263,19 +298,19 @@ bin:echo-arch elf
 elf:echo-arch $(load_lds)
 
 
-load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
+load_lds-n:$(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)" 				$(NORMAL)
 	@$(CC) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(OBJS) $(LIB_DIR) $(LFLAGS)
 
 # it's a bootloader bin file,user have to select *.lds file by your self
 # default file_lds = boot.lds
-load_lds-y:$(OUTPUT_DIR)-$(ARCH) $(OBJS)
+load_lds-y:$(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF)"				$(NORMAL)
 	@$(LD) -T$(file_lds) $(OBJS) -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_ELF) $(LFLAGS) $(LIB_DIR)  
 #################################################################
 .PHONY: mlib
-mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
+mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(GCHS-y) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO)"				$(NORMAL)
 	@$(CC) -shared -fPIC -o $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) $(OBJS)
 	@echo -e $(YELLOW)"    create     $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A)"				$(NORMAL)
@@ -283,12 +318,13 @@ mlib:echo-arch  $(OUTPUT_DIR)-$(ARCH) $(OBJS)
 #################################################################
 echo-arch:
 	@echo -e $(YELLOW)"    ARCH       [$(ARCH)]"										$(NORMAL)
+
 %.o:%.c
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
-	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR)
+	@$(CC) -o $@ -c $^ $(CC_FLAGS) --include autoconfig.h -fgnu89-inline $(INCLUDE_DIR)
 %.o:%.cpp
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
-	@$(CC) -o $@ -c $^ $(CC_FLAGS) $(INCLUDE_DIR) 
+	@$(CPP) -o $@ -c $^ $(CPP_FLAGS) --include autoconfig++.hpp $(INCLUDE_DIR) 
 %.o:%.S
 	@echo -e $(CYAN)"    compile    $^"													$(NORMAL)
 	@$(CC) -o $@ -c $^ $(CS_FLAGS) $(INCLUDE_DIR)
@@ -357,7 +393,17 @@ acopy_mlib:
 	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_SO) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
 	cp $(OUTPUT_DIR)-$(ARCH)/$(OUTPUT_A) /work/armdebug/$(OUTPUT_DIR)-$(ARCH)
 
+gch:$(GCHS-y)
+	@echo -e $(YELLOW)"    precompile finish"$(NORMAL)
+rmgch:
+	@-rm -f $(GCHS-y)
 
+%.hpp.gch:%.hpp
+	@echo -e $(CYAN)"    precompile    $^"$(NORMAL)
+	@$(CPP)  -o $@ -x c++-header -c $^ $(GCHS_INCLUDE_DIR)
+%.h.gch:%.h
+	@echo -e $(CYAN)"    precompile    $^"$(NORMAL)
+	@$(CC)  -o $@ -x c-header -c $^ $(GCHS_INCLUDE_DIR)
 
 
 run:
@@ -402,8 +448,14 @@ print_env:
 	@echo LFLAGS "      " = $(LFLAGS)
 	@echo LIB_DIR "     " = $(LIB_DIR)
 	@echo CFLAGS "      " = $(CFLAGS)
+	@echo CC_FLAGS "      " = $(CC_FLAGS)
+	@echo CPP_FLAGS "     " = $(CPP_FLAGS)
 
 	@echo $(SRCS-y)
+fl:
+	@echo =========================================================
+	@echo GCHS-y "  "= $(GCHS-y)
+	@echo SRCS-y "  "= $(SRCS-y)
 help:
 	@echo ======================== Makefile help ========================
 	@echo "    "configure"    "make autoconfig.h from config file default config.mk
@@ -427,8 +479,8 @@ help:
 	@echo "    "SRCS-y"       "select file be compiled
 	@echo "                   "SRCS-y += src/main.c src/foo.c
 	@echo "                   "SRCS-\(CONFIG_MODULE\) += mod/module.c
-	@echo "    "PRJS"         "sub project list
-	@echo "                   "PRJS += pix piy piz
+	@echo "    "PRJS-y"         "sub project list
+	@echo "                   "PRJS-y += pix piy piz
 	@echo "                   "compile 3 project one by one
 
 # user define
@@ -459,15 +511,19 @@ splint:
 #################################################################
 # all sub project
 
-each-all       := $(foreach n,$(PRJS),all-$(n))
-each-clean     := $(foreach n,$(PRJS),clean-$(n))  clean-mconf
-each-distclean := $(foreach n,$(PRJS),distclean-$(n))
-each-strip     := $(foreach n,$(PRJS),strip-$(n))
-each-copy      := $(foreach n,$(PRJS),copy-$(n))
+each-all       := $(foreach n,$(PRJS-y),all-$(n))
+each-clean     := $(foreach n,$(PRJS-y),clean-$(n))  clean-mconf
+each-distclean := $(foreach n,$(PRJS-y),distclean-$(n))
+each-strip     := $(foreach n,$(PRJS-y),strip-$(n))
+each-copy      := $(foreach n,$(PRJS-y),copy-$(n))
 
 
 .PHONY:all
-all:$(each-all)
+all:$(PRJS-y)
+
+pi%:
+	$(MAKE) DP=$@ --no-print-directory
+# $(each-all)
 $(each-all):
 	$(MAKE) DP=$(patsubst all-%,%,$@) --no-print-directory
 
@@ -476,6 +532,7 @@ $(each-all):
 clean:$(each-clean)
 	@$(MAKE) clean -C script/kconfig  --no-print-directory
 	@$(MAKE) clean -C script/mkheader  --no-print-directory
+	@-rm -if .sha1
 $(each-clean):
 	@$(MAKE) DP=$(patsubst clean-%,%,$@) aclean --no-print-directory
 	
@@ -498,6 +555,8 @@ copy:$(each-copy)
 $(each-copy):
 	@$(MAKE) DP=$(patsubst copy-%,%,$@) acopy --no-print-directory
 	
+# End rmgch sub project
 
-
-# End all sub project
+ifeq ($(file_rule), $(wildcard $(file_rule)))
+include $(file_rule)
+endif

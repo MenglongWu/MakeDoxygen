@@ -1,56 +1,71 @@
-mainmenu "Lsdf"
+mainmenu "MakeDoxygen"
 
-menu "library libla.so"
-config USE_LA_FUN1
-	bool "libla"
-	default y
+menu "Project"
 
+source script/listprj.kcfg
 
-config USE_LA_PART2
-	bool "la part2"
+menu "Print level"
+config USE_PRINTL
+	bool "use printl"
+config UNUSE_PRINTW
+	depends on USE_PRINTL
+	bool "unuse PRINTW"
 
-config USE_LA_FUN3
-	bool "la fun3"
+config UNUSE_PRINTE
+	depends on USE_PRINTL
+	bool "unuse PRINTE"
 
+config UNUSE_DBGM
+	depends on USE_PRINTL
+	bool "unuse dbgm"
 
-config LA_FUN1_STR
-	string "libla fun1 string" 
-	default "1. I'm fun1() from libla.so"
-	default "2. I'm fun1() from libla.so"
-	default "3. I'm fun1() from libla.so"
-
-config LA_FUN2_STR
-	string "libla fun2 string" 
-	option la_fun2_list
-	default "1. I'm fun2() from libla.so"
+config NDEBUG
+	bool "unuse assert,dbg (-DNDEBUG)"
 
 endmenu
 
 
-menu "library liblb.so"
-config USE_LB_FUN1
-	bool "liblb"
+config GIT_SHA1
+	bool "enable git sha1 node id"
+	default n
+	help
+	  macro __GIT_SHA1__ get ID
+config USE_GCH
+	bool "Support precompile"
 	default y
 
-config USE_LB_PART2
-	bool "lb part2"
+config PRECOMPILE_AUTOCONFIG_H
+	depends on USE_GCH
+	bool "add autoconfig.h.gch"
+	default y
 
-config USE_LB_FUN3
-	bool "lb fun3"		
+config PRECOMPILE_AUTOCONFIG_HPP
+	depends on USE_GCH
+	bool "add autoconfig++.h.gch"
+	default n
 
-config LB_FUN1_STR
-	string "liblb fun1 string" 
-	option lb_fun1_list
-	default "1. I'm fun1() from liblb.so"
-	default "2. I'm fun1() from liblb.so"
-	default "3. I'm fun1() from liblb.so"
-		
-config LB_FUN2_STR
-	string "liblb fun2 string" 
-	option lb_fun2_list
-	default "1. I'm fun2() from liblb.so"
-	default "2. I'm fun2() from liblb.so"
-	default "3. I'm fun2() from liblb.so"
+
+
 
 endmenu
 
+
+#
+# only example
+# 
+source script/prj_liba/Kconfig
+source script/prj_libb/Kconfig
+source script/qt-common/Kconfig
+#
+# End only example
+# 
+
+
+
+
+
+#
+# TODO yours
+# 
+
+# source script/<your project>/Kconfig

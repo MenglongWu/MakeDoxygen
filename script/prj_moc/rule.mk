@@ -1,0 +1,1 @@
+include script/qt-common/rule.mk

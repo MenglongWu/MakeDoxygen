@@ -7,15 +7,15 @@ PRJ_SUBLEVEL   = "0"
 
 # default download.elf,download.dis,download.bin
 OUTPUT_ELF	= default.elf
-OUTPUT_DIS	= 
-OUTPUT_BIN	= 
-OUTPUT_SO 	= 
-OUTPUT_A	= 
-OUTPUT_DIR 	= 
+# OUTPUT_DIS	= 
+# OUTPUT_BIN	= 
+# OUTPUT_SO 	= 
+# OUTPUT_A	= 
+# OUTPUT_DIR 	= 
 
 
 
-INCLUDE_DIR	+= 
+INCLUDE_DIR	+=
 LFLAGS		+= -lla -llb
-LIB_DIR 	+= 
-CFLAGS      += 
+LIB_DIR 	+=
+CFLAGS      	+=

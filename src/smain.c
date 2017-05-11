@@ -1,5 +1,10 @@
-#include "stdio.h"
-#include "math.h"
+/**
+ * Copyright 2015-2017 MenglongWoo@aliyun.com
+ * @file	src/smain.c
+ * @brief	example for MakeDoxygen
+*/
+#include <stdio.h>
+#include <math.h>
 
 #include <autoconfig.h>
 #include "proginfo.h"
@@ -13,16 +18,18 @@ extern "C" {
 int main()
 {
 	printf("Macro:\n"
+		"\tARCH      %s\n"
 		"\tPRJ_NAME      %s\n"
 		"\tPRJ_VERSION    %s\n"
 		"\tPRJ_PATCHLEVEL %s\n"
 		"\tPRJ_SUBLEVEL   %s\n"
 		"\tBUILD_DATE    %s\n",
+		ARCH,
 		PRJ_NAME,
 		PRJ_VERSION,
 		PRJ_PATCHLEVEL,
 		PRJ_SUBLEVEL,
-		BUILD_DATE);
+		__DATE__ " " __TIME__);
 
 	printf("asin(1) = %f\n", asin(1));
 
@@ -56,18 +63,19 @@ int main()
 	lbfun3();
 #endif
 #endif
-	
 	return 0;
 }
 
 
 
 PROG_INFO(project, PRJ_NAME);
-PROG_VERSION( PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
-PROG_BUILD(BUILD_DATE);
+PROG_VERSION(PRJ_VERSION "." PRJ_PATCHLEVEL "." PRJ_SUBLEVEL);
+PROG_BUILD(__DATE__ " " __TIME__);
+PROG_GITSHA1(__GIT_SHA1__);
+
 PROG_AUTHOR("MenglongWu");
-PROG_DEPEND( "liba.so libb.so");
-PROG_DESCRIPTION( "MakeDoxygen demo");
+PROG_DEPEND("liba.so libb.so");
+PROG_DESCRIPTION("MakeDoxygen demo");
 
 #ifdef __cplusplus
 }

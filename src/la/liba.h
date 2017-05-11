@@ -8,7 +8,7 @@ extern "C" {
 void lafun1();
 void lafun2();
 void lafun3();
-
+char *la_version();
 
 #ifdef __cplusplus
 }
