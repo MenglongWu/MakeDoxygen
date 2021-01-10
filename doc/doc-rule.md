@@ -1,4 +1,4 @@
-rule.mk自定义规则
+没Qt Creator时如何用Makefile编译QT工程、rule.mk自定义规则
 ================
   __自定义__规则，实际上它也是个Makefile。
 
@@ -44,8 +44,8 @@ include script/hello/rule.mk
 # Qt工程模板
   script/prj_qt、script/prj_moc都是Qt项目子工程
 
-  - rule.mk 引用script/qt-common/rule.mk规则
-  - project.mk 引用script/qt-common/qt.mk
+  - [rule.mk](./script/qt-common/rule.mk) 引用script/qt-common/rule.mk规则
+  - [project.mk](./script/qt-common/qt.mk) 引用script/qt-common/qt.mk
 
   Qt有自己的扩展C++语法
   需要将从 __*.h__ 预编译成 gcc 可识别的语法格式 __*.moc.cpp__ 。

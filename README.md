@@ -13,8 +13,9 @@ MakeDoxygen
   而无需在各个子目录下散落Makefile。
   如果你实在想保留金典的散落Makefile风格，MakeDoxygen也可以满足你，这两篇文章
   会给你启示
-  [《3min搭建Hello World》](./doc/simple-guide.md)、
-  [《rule.mk自定义规则》](./doc/doc-rule.md)
+  
+  - [《3min搭建Hello World》](./doc/simple-guide.md)、
+  - [《没Qt Creator时如何用Makefile编译QT工程、rule.mk自定义规则》](./doc/doc-rule.md)
 
 # 2 怎样用到你的工程
   在决定使用MakeDoxygen前，先验证你的环境是否符合 
