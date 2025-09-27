@@ -1,5 +1,5 @@
 #
-# Makefile Template for "Application Program"
+# Makefile Template for "Application Program" 
 #
 # Description:
 #	Automatic load file config list "config_xxx_file_list.mk"
